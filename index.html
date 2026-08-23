@@ -82,11 +82,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
             <div class="relative" onclick="event.stopPropagation()">
                 <label class="text-[11px] text-gray-400 font-semibold mb-1 flex justify-between items-center">
-                    <span>DARS / KUN BO'LIMLARI (1-19):</span>
+                    <span>DARS / KUN BO'LIMLARI (1-20):</span>
                     <span class="text-rose-400 cursor-pointer hover:underline" onclick="toggleAllDays()">Barchasi / Tozalash</span>
                 </label>
                 <div onclick="toggleDayDropdown()" class="bg-[#1e293b] border border-gray-700 text-white text-sm rounded-lg px-4 py-2 flex justify-between items-center cursor-pointer min-h-[42px]">
-                    <span id="selected-days-text" class="truncate text-rose-400 font-semibold">1-19 kunlar tanlangan</span>
+                    <span id="selected-days-text" class="truncate text-rose-400 font-semibold">1-20 kunlar tanlangan</span>
                     <i class="fa-solid fa-chevron-down text-xs text-gray-400 ml-2"></i>
                 </div>
 
@@ -653,7 +653,26 @@
       { day: 19, word: "毎日", reading: "まいにち", romaji: "mainichi", meaning: "Har kuni" },
       { day: 19, word: "毎晩", reading: "まいばん", romaji: "maiban", meaning: "Har kecha" },
       { day: 19, word: "毎年", reading: "まいとし / まいねん", romaji: "maitoshi / meinen", meaning: "Har yili" },
-      { day: 19, word: "三日毎", reading: "みっかごと", romaji: "mikkagoto", meaning: "Har 3 kunda" }
+      { day: 19, word: "三日毎", reading: "みっかごと", romaji: "mikkagoto", meaning: "Har 3 kunda" },
+
+      //20-kun kanji
+      // --- 20-KUN KANJILARI ---
+{ day: 20, word: "海", reading: "うみ", romaji: "umi", meaning: "Dengiz" },
+{ day: 20, word: "日本海", reading: "にほんかい", romaji: "nihonkai", meaning: "Yaponiyadagi dengiz (Yapon dengizi)" },
+{ day: 20, word: "海外", reading: "かいがい", romaji: "kaigai", meaning: "Chet elda / Xorij" },
+{ day: 20, word: "海水", reading: "かいすい", romaji: "kaisui", meaning: "Dengiz suvi" },
+
+{ day: 20, word: "駅", reading: "えき", romaji: "eki", meaning: "Stansiya / Bekat" },
+{ day: 20, word: "駅長", reading: "えきちょう", romaji: "ekichō", meaning: "Stansiya boshlig'i" },
+{ day: 20, word: "駅員", reading: "えきいん", romaji: "ekiin", meaning: "Stansiya xodimi" },
+
+{ day: 20, word: "駐車場", reading: "ちゅうしゃじょう", romaji: "chūshajō", meaning: "Avtoturargoh" },
+{ day: 20, word: "駐在", reading: "ちゅうざい", romaji: "chūzai", meaning: "Bo'lish / xizmat safarida tayinlanish" },
+
+{ day: 20, word: "試験", reading: "しけん", romaji: "shiken", meaning: "Imtihon" },
+{ day: 20, word: "受験する", reading: "じゅけんする", romaji: "jukensuru", meaning: "Imtihon topshirish" },
+{ day: 20, word: "経験", reading: "けいけん", romaji: "keiken", meaning: "Tajriba" },
+{ day: 20, word: "体験", reading: "たいけん", romaji: "taiken", meaning: "Shaxsiy tajriba / Amaliyot" },
             ],
             n5_vocab: [
   // --- 1-KUN LUG'ATI (1-qism) ---
@@ -1289,7 +1308,40 @@
 { day: 19, word: "クラシック", romaji: "kurashikku", meaning: "Klassik" },
 { day: 19, word: "こんど", romaji: "kondo", meaning: "Keyingi safar" },
 { day: 19, word: "〜ごろ", romaji: "-goro", meaning: "Chamasi, taxminan" },
-{ day: 19, word: "だいじょうぶ", romaji: "daijoubu", meaning: "Hammasi joyida" }
+{ day: 19, word: "だいじょうぶ", romaji: "daijoubu", meaning: "Hammasi joyida" },
+
+// 20-kun lugat
+// --- 20-KUN LUG'ATI ---
+{ day: 20, word: "いそぎます", romaji: "isogimasu", meaning: "Shoshilmoq" },
+{ day: 20, word: "まちます", romaji: "machimasu", meaning: "Kutmoq" },
+{ day: 20, word: "（くるまを）とめます", romaji: "(kuruma o) tomemasu", meaning: "To'xtatmoq" },
+{ day: 20, word: "（みぎへ）まがります", romaji: "(migi e) magarimasu", meaning: "Burilmoq" },
+{ day: 20, word: "もちます", romaji: "mochimasu", meaning: "Olmoq" },
+{ day: 20, word: "とります", romaji: "torimasu", meaning: "Olmoq" },
+{ day: 20, word: "てつだいます", romaji: "tetsudaimasu", meaning: "Yordam bermoq" },
+{ day: 20, word: "よびます", romaji: "yobimasu", meaning: "Qo'ng'iroq qilmoq, chaqirmoq" },
+{ day: 20, word: "はなします", romaji: "hanashimasu", meaning: "Aytmoq" },
+{ day: 20, word: "みせます", romaji: "misemasu", meaning: "Ko'rsatmoq" },
+{ day: 20, word: "（じゅうしょを）おしえます", romaji: "(jūsho o) oshiemasu", meaning: "Manzilni aytmoq" },
+{ day: 20, word: "はじめます", romaji: "hajimemasu", meaning: "Boshlamoq" },
+{ day: 20, word: "ぱすぽーと", romaji: "pasupōto", meaning: "Pasport" },
+{ day: 20, word: "ちず", romaji: "chizu", meaning: "Xarita" },
+{ day: 20, word: "じゅうしょ", romaji: "jūsho", meaning: "Manzil" },
+{ day: 20, word: "みち", romaji: "michi", meaning: "Yo'l" },
+{ day: 20, word: "しんごう", romaji: "shingō", meaning: "Svetofor" },
+{ day: 20, word: "しお", romaji: "shio", meaning: "Tuz" },
+{ day: 20, word: "さとう", romaji: "satō", meaning: "Shakar" },
+{ day: 20, word: "よみかた", romaji: "yomikata", meaning: "O'qilishi" },
+{ day: 20, word: "～かた", romaji: "~kata", meaning: "~ usul" },
+{ day: 20, word: "ゆっくり", romaji: "yukkuri", meaning: "Asta-sekin" },
+{ day: 20, word: "すぐ", romaji: "sugu", meaning: "Darhol" },
+{ day: 20, word: "また", romaji: "mata", meaning: "Shuningdek" },
+{ day: 20, word: "あとで", romaji: "atode", meaning: "Keyinroq" },
+{ day: 20, word: "まず", romaji: "mazu", meaning: "Birinchidan" },
+{ day: 20, word: "つぎに", romaji: "tsugi ni", meaning: "Keyingi" },
+{ day: 20, word: "もうすこし", romaji: "mō sukoshi", meaning: "Yana ozroq" },
+{ day: 20, word: "もう～", romaji: "mō ~", meaning: "Allaqachon ~" },
+{ day: 20, word: "まっすぐ", romaji: "massugu", meaning: "To'g'riga" },
             ],
             grammar: [
                 { day: 1, title: '〜たいです', formula: 'Fe\'l + たいです', explanation: 'Xohish-istakni bildiradi.', example_jp: '日本へ行きたいです。', example_reading: 'Nihon e ikitaidesu.', example_uz: 'Yaponiyaga borishni xohlayman.' },
@@ -1301,7 +1353,7 @@
         };
 
         let customWords = JSON.parse(localStorage.getItem('my_jp_custom_words') || '[]');
-        let selectedDays = Array.from({length: 19}, (_, i) => i + 1);
+        let selectedDays = Array.from({length: 20}, (_, i) => i + 1);
 
         let currentCategory = 'n5_kanji';
         let sortMode = 'sequential';
@@ -1343,7 +1395,7 @@
             const container = document.getElementById('days-checkbox-container');
             if (!container) return;
             container.innerHTML = '';
-            for (let i = 1; i <= 19; i++) {
+            for (let i = 1; i <= 20; i++) {
                 const label = document.createElement('label');
                 label.className = "flex items-center gap-2 p-1.5 rounded hover:bg-gray-800 cursor-pointer text-xs";
                 const isChecked = selectedDays.includes(i) ? 'checked' : '';
@@ -1360,7 +1412,7 @@
             const select = document.getElementById('custom-day-select');
             if (!select) return;
             select.innerHTML = '';
-            for (let i = 1; i <= 19; i++) {
+            for (let i = 1; i <= 20; i++) {
                 const opt = document.createElement('option');
                 opt.value = i;
                 opt.innerText = `${i}-kun`;
@@ -1394,7 +1446,7 @@
         }
 
         function selectAllDays() {
-            selectedDays = Array.from({length: 19}, (_, i) => i + 1);
+            selectedDays = Array.from({length: 20}, (_, i) => i + 1);
             document.querySelectorAll('#days-checkbox-container input').forEach(cb => cb.checked = true);
             updateSelectedDaysText();
             reshuffleData();
@@ -1408,14 +1460,14 @@
         }
 
         function toggleAllDays() {
-            if (selectedDays.length === 19) deselectAllDays();
+            if (selectedDays.length === 20) deselectAllDays();
             else selectAllDays();
         }
 
         function updateSelectedDaysText() {
             const txt = document.getElementById('selected-days-text');
             if (!txt) return;
-            if (selectedDays.length === 19) txt.innerText = "Barcha kunlar (1-19)";
+            if (selectedDays.length === 20) txt.innerText = "Barcha kunlar (1-20)";
             else if (selectedDays.length === 0) txt.innerText = "Hech qaysi kun tanlanmagan";
             else txt.innerText = `${selectedDays.length} ta kun tanlandi (${selectedDays.join(', ')})`;
         }
