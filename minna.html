@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minna no Nihongo — 1–25 Kun</title>
+
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#1e293b;
+  --line:#334155;
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --rose:#e11d48;
+  --violet:#8b5cf6;
+  --green:#86efac;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at top left,#312e81 0,transparent 35%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+.wrap{
+  max-width:1050px;
+  margin:auto;
+  padding:20px;
+}
+
+header{
+  background:rgba(30,41,59,.94);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:28px;
+  margin-bottom:18px;
+}
+
+h1{
+  margin:0;
+  font-size:clamp(25px,5vw,42px);
+  background:linear-gradient(90deg,#fb7185,#a78bfa);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.sub{
+  color:var(--muted);
+  margin-top:8px;
+  line-height:1.6;
+}
+
+.back{
+  display:inline-block;
+  margin-top:16px;
+  color:white;
+  background:#334155;
+  text-decoration:none;
+  padding:10px 14px;
+  border-radius:12px;
+}
+
+.days{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(52px,1fr));
+  gap:8px;
+  background:rgba(30,41,59,.9);
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:20px;
+}
+
+.day-btn{
+  border:0;
+  border-radius:12px;
+  padding:12px 6px;
+  background:#0f172a;
+  color:#cbd5e1;
+  font-weight:bold;
+  cursor:pointer;
+  border:1px solid #334155;
+}
+
+.day-btn:hover,
+.day-btn.active{
+  background:linear-gradient(135deg,var(--rose),var(--violet));
+  color:white;
+}
+
+.lesson{
+  margin-top:18px;
+  background:rgba(30,41,59,.96);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:24px;
+}
+
+.badge{
+  display:inline-block;
+  background:rgba(225,29,72,.16);
+  color:#fda4af;
+  padding:7px 12px;
+  border-radius:999px;
+  font-weight:bold;
+}
+
+.lesson h2{
+  font-size:clamp(22px,4vw,32px);
+  margin-bottom:8px;
+}
+
+.intro{
+  color:#cbd5e1;
+  line-height:1.7;
+}
+
+.rule-card{
+  background:#0f172a;
+  border:1px solid #334155;
+  border-radius:18px;
+  padding:20px;
+  margin:14px 0;
+}
+
+.rule-title{
+  font-size:24px;
+  font-weight:bold;
+  color:#fda4af;
+}
+
+.explain{
+  color:#cbd5e1;
+  line-height:1.7;
+  margin:10px 0 16px;
+}
+
+.jp{
+  font-size:27px;
+  font-weight:bold;
+}
+
+.romaji{
+  color:#c4b5fd;
+  margin-top:8px;
+}
+
+.uz{
+  color:var(--green);
+  margin-top:8px;
+}
+
+.label{
+  font-size:12px;
+  text-transform:uppercase;
+  color:#94a3b8;
+  margin-bottom:5px;
+}
+
+.tip{
+  background:rgba(134,239,172,.07);
+  border-left:4px solid #86efac;
+  padding:14px;
+  margin-top:20px;
+  color:#d1fae5;
+  line-height:1.6;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+
+.controls button{
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  background:#334155;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.controls button:hover{
+  background:var(--rose);
+}
+
+.progress{
+  color:#94a3b8;
+  margin-top:14px;
+  font-size:14px;
+}
+
+footer{
+  text-align:center;
+  color:#64748b;
+  padding:25px;
+}
+
+@media(max-width:600px){
+  .wrap{
+    padding:12px;
+  }
+
+  .lesson{
+    padding:18px;
+  }
+
+  .jp{
+    font-size:22px;
+  }
+
+  .rule-title{
+    font-size:21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<header>
+
+<h1>📚 Minna no Nihongo</h1>
+
+<div class="sub">
+1–25 kunlik grammatika kursi.
+Har bir darsda grammatika qoidalari,
+o‘zbekcha tushuntirishlar, misollar va talaffuz mavjud.
+</div>
+
+<a class="back" href="index.html">
+← Asosiy sahifaga qaytish
+</a>
+
+</header>
+
+
+<div class="days" id="days"></div>
+
+<section class="lesson" id="lesson"></section>
+
+<footer>
+Yapon tili o‘rganish platformasi • Minna no Nihongo 1–25
+</footer>
+
+</div>
+
+
+<script>
+
+const lessons = [
+
+/* =========================
+1-KUN
+========================= */
+
+{
+title:"1-Kun: Tanishuv va asosiy gaplar",
+
+rules:[
+
+{
+rule:"N1 は N2 です",
+desc:"N1 ning N2 ekanini bildiradi. は bu yerda mavzuni ko‘rsatadi, です esa muloyim tasdiq shaklidir.",
+jp:"わたしは がくせいです。",
+romaji:"Watashi wa gakusei desu.",
+uz:"Men talabaman."
+},
+
+{
+rule:"N1 は N2 ですか",
+desc:"Savol tuzish uchun gap oxiriga か qo‘shiladi.",
+jp:"たなかさんは せんせいですか。",
+romaji:"Tanaka-san wa sensei desu ka.",
+uz:"Tanaka o‘qituvchimi?"
+},
+
+{
+rule:"N1 も N2 です",
+desc:"も “ham” ma’nosini beradi.",
+jp:"わたしも がくせいです。",
+romaji:"Watashi mo gakusei desu.",
+uz:"Men ham talabaman."
+},
+
+{
+rule:"N1 の N2",
+desc:"の ikki otni bog‘laydi va tegishlilik yoki munosabatni bildiradi.",
+jp:"これは にほんごの ほんです。",
+romaji:"Kore wa nihongo no hon desu.",
+uz:"Bu yapon tili kitobi."
+}
+
+]
+},
+
+/* =========================
+2-KUN
+========================= */
+
+{
+title:"2-Kun: Buyumlar va ko‘rsatish so‘zlari",
+
+rules:[
+
+{
+rule:"これ / それ / あれ",
+desc:"これ — bu narsa, それ — u narsa, あれ — ana u narsa.",
+jp:"これは ほんです。",
+romaji:"Kore wa hon desu.",
+uz:"Bu kitob."
+},
+
+{
+rule:"この / その / あの + N",
+desc:"Bu ko‘rsatish so‘zlaridan keyin ot keladi.",
+jp:"この ほんは わたしのです。",
+romaji:"Kono hon wa watashi no desu.",
+uz:"Bu kitob meniki."
+},
+
+{
+rule:"N1 の N2",
+desc:"Biror narsaning kimga yoki nimaga tegishli ekanini bildiradi.",
+jp:"これは わたしの かばんです。",
+romaji:"Kore wa watashi no kaban desu.",
+uz:"Bu mening sumkam."
+}
+
+]
+},
+
+/* =========================
+3-KUN
+========================= */
+
+{
+title:"3-Kun: Joylar",
+
+rules:[
+
+{
+rule:"ここ / そこ / あそこ",
+desc:"Joyni ko‘rsatadi: bu yer, u yer, ana u yer.",
+jp:"トイレは あそこです。",
+romaji:"Toire wa asoko desu.",
+uz:"Hojatxona ana u yerda."
+},
+
+{
+rule:"こちら / そちら / あちら",
+desc:"Joyni muloyimroq ko‘rsatish uchun ishlatiladi.",
+jp:"きょうしつは こちらです。",
+romaji:"Kyoushitsu wa kochira desu.",
+uz:"Sinf mana bu tomonda."
+},
+
+{
+rule:"N は Place です",
+desc:"Biror narsaning qayerdaligini bildiradi.",
+jp:"じむしょは 2かいです。",
+romaji:"Jimusho wa nikai desu.",
+uz:"Ofis ikkinchi qavatda."
+}
+
+]
+},
+
+/* =========================
+4-KUN
+========================= */
+
+{
+title:"4-Kun: Vaqt va fe’llar",
+
+rules:[
+
+{
+rule:"N は 時間です",
+desc:"Soat yoki vaqtni aytishda ishlatiladi.",
+jp:"いま 7じです。",
+romaji:"Ima shichi-ji desu.",
+uz:"Hozir soat yetti."
+},
+
+{
+rule:"V-ます",
+desc:"Fe’lning muloyim shakli. Hozirgi yoki kelasi zamon ma’nosida ishlatilishi mumkin.",
+jp:"まいにち べんきょうします。",
+romaji:"Mainichi benkyou shimasu.",
+uz:"Har kuni o‘qiyman."
+},
+
+{
+rule:"V-ません",
+desc:"Fe’lning inkor shakli.",
+jp:"にちようびは はたらきません。",
+romaji:"Nichiyoubi wa hatarakimasen.",
+uz:"Yakshanba kuni ishlamayman."
+},
+
+{
+rule:"V-ました",
+desc:"O‘tgan zamon tasdiq shakli.",
+jp:"きのう べんきょうしました。",
+romaji:"Kinou benkyou shimashita.",
+uz:"Kecha o‘qidim."
+},
+
+{
+rule:"V-ませんでした",
+desc:"O‘tgan zamon inkor shakli.",
+jp:"きのう べんきょうしませんでした。",
+romaji:"Kinou benkyou shimasen deshita.",
+uz:"Kecha o‘qimadim."
+}
+
+]
+},
+
+/* =========================
+5-KUN
+========================= */
+
+{
+title:"5-Kun: Borish, kelish va transport",
+
+rules:[
+
+{
+rule:"Place へ 行きます",
+desc:"へ yo‘nalishni bildiradi.",
+jp:"がっこうへ いきます。",
+romaji:"Gakkou e ikimasu.",
+uz:"Maktabga boraman."
+},
+
+{
+rule:"Place から 来ます",
+desc:"Qayerdan kelishni bildiradi.",
+jp:"ウズベキスタンから きました。",
+romaji:"Uzubekisutan kara kimashita.",
+uz:"O‘zbekistondan keldim."
+},
+
+{
+rule:"Transport で 行きます",
+desc:"で transport vositasini bildiradi.",
+jp:"でんしゃで いきます。",
+romaji:"Densha de ikimasu.",
+uz:"Poyezdda boraman."
+},
+
+{
+rule:"Person と 行きます",
+desc:"と kim bilandir birga harakat qilishni bildiradi.",
+jp:"ともだちと いきます。",
+romaji:"Tomodachi to ikimasu.",
+uz:"Do‘stim bilan boraman."
+}
+
+]
+},
+
+/* =========================
+6-KUN
+========================= */
+
+{
+title:"6-Kun: Harakat obyekti va joy",
+
+rules:[
+
+{
+rule:"N を V",
+desc:"を fe’lning bevosita obyektini bildiradi.",
+jp:"ほんを よみます。",
+romaji:"Hon o yomimasu.",
+uz:"Kitob o‘qiyman."
+},
+
+{
+rule:"Place で V",
+desc:"Harakat sodir bo‘ladigan joyni bildiradi.",
+jp:"としょかんで べんきょうします。",
+romaji:"Toshokan de benkyou shimasu.",
+uz:"Kutubxonada o‘qiyman."
+},
+
+{
+rule:"V-ませんか",
+desc:"Muloyim taklif yoki biror ishga chaqirish.",
+jp:"いっしょに べんきょうしませんか。",
+romaji:"Issho ni benkyou shimasen ka.",
+uz:"Birga o‘qimaysizmi?"
+},
+
+{
+rule:"V-ましょう",
+desc:"Birgalikda biror ish qilish taklifi.",
+jp:"いっしょに いきましょう。",
+romaji:"Issho ni ikimashou.",
+uz:"Birga boraylik."
+}
+
+]
+},
+
+/* =========================
+7-KUN
+========================= */
+
+{
+title:"7-Kun: Berish va olish",
+
+rules:[
+
+{
+rule:"N を あげます",
+desc:"Biror narsani boshqa kishiga berishni bildiradi.",
+jp:"ともだちに プレゼントを あげました。",
+romaji:"Tomodachi ni purezento o agemashita.",
+uz:"Do‘stimga sovg‘a berdim."
+},
+
+{
+rule:"N を もらいます",
+desc:"Biror narsani kimdandir olishni bildiradi.",
+jp:"せんせいに ほんを もらいました。",
+romaji:"Sensei ni hon o moraimashita.",
+uz:"O‘qituvchidan kitob oldim."
+},
+
+{
+rule:"N を かります",
+desc:"Biror narsani qarzga olish.",
+jp:"ともだちに えんぴつを かりました。",
+romaji:"Tomodachi ni enpitsu o karimashita.",
+uz:"Do‘stimdan qalam oldim."
+},
+
+{
+rule:"N を かします",
+desc:"Biror narsani boshqa kishiga qarzga berish.",
+jp:"ともだちに ほんを かしました。",
+romaji:"Tomodachi ni hon o kashimashita.",
+uz:"Do‘stimga kitob berdim."
+}
+
+]
+},
+
+/* =========================
+8-KUN
+========================= */
+
+{
+title:"8-Kun: Sifatlar",
+
+rules:[
+
+{
+rule:"い-sifat",
+desc:"Ko‘plab sifatlar い bilan tugaydi.",
+jp:"この ほんは おもしろいです。",
+romaji:"Kono hon wa omoshiroi desu.",
+uz:"Bu kitob qiziq."
+},
+
+{
+rule:"な-sifat + な + N",
+desc:"な-sifat ot oldidan kelganda な ishlatiladi.",
+jp:"きれいな まちです。",
+romaji:"Kirei na machi desu.",
+uz:"Chiroyli shahar."
+},
+
+{
+rule:"い-sifat + N",
+desc:"い-sifat otni bevosita aniqlaydi.",
+jp:"あたらしい くるまです。",
+romaji:"Atarashii kuruma desu.",
+uz:"Yangi mashina."
+},
+
+{
+rule:"Adj は どうですか",
+desc:"Biror narsa yoki holat haqida fikr so‘rash.",
+jp:"にほんの せいかつは どうですか。",
+romaji:"Nihon no seikatsu wa dou desu ka.",
+uz:"Yaponiyadagi hayot qanday?"
+}
+
+]
+},
+
+/* =========================
+9-KUN
+========================= */
+
+{
+title:"9-Kun: Yoqtirish va tushunish",
+
+rules:[
+
+{
+rule:"N が すきです",
+desc:"Biror narsani yoqtirishni bildiradi.",
+jp:"おんがくが すきです。",
+romaji:"Ongaku ga suki desu.",
+uz:"Musiqani yoqtiraman."
+},
+
+{
+rule:"N が きらいです",
+desc:"Biror narsani yoqtirmaslikni bildiradi.",
+jp:"さかなが きらいです。",
+romaji:"Sakana ga kirai desu.",
+uz:"Baliqni yoqtirmayman."
+},
+
+{
+rule:"N が わかります",
+desc:"Tushunish yoki bilishni bildiradi.",
+jp:"にほんごが わかります。",
+romaji:"Nihongo ga wakarimasu.",
+uz:"Yapon tilini tushunaman."
+},
+
+{
+rule:"N が あります",
+desc:"Biror narsa yoki imkoniyat mavjudligini bildiradi.",
+jp:"じかんが あります。",
+romaji:"Jikan ga arimasu.",
+uz:"Vaqtim bor."
+}
+
+]
+},
+
+/* =========================
+10-KUN
+========================= */
+
+{
+title:"10-Kun: Mavjudlik va joylashuv",
+
+rules:[
+
+{
+rule:"N が あります",
+desc:"Jonsiz narsalarning mavjudligini bildiradi.",
+jp:"つくえが あります。",
+romaji:"Tsukue ga arimasu.",
+uz:"Stol bor."
+},
+
+{
+rule:"N が います",
+desc:"Odam va hayvonlar kabi jonli mavjudotlar uchun ishlatiladi.",
+jp:"ねこが います。",
+romaji:"Neko ga imasu.",
+uz:"Mushuk bor."
+},
+
+{
+rule:"Place に N が あります",
+desc:"Biror jonsiz narsaning joylashuvini bildiradi.",
+jp:"へやに つくえが あります。",
+romaji:"Heya ni tsukue ga arimasu.",
+uz:"Xonada stol bor."
+},
+
+{
+rule:"Place に N が います",
+desc:"Odam yoki hayvonning joylashuvini bildiradi.",
+jp:"こうえんに こどもが います。",
+romaji:"Kouen ni kodomo ga imasu.",
+uz:"Bog‘da bolalar bor."
+}
+
+]
+},
+
+/* =========================
+11-KUN
+========================= */
+
+{
+title:"11-Kun: Miqdor va sanoq",
+
+rules:[
+
+{
+rule:"～つ",
+desc:"Narsalarni umumiy tarzda sanash uchun ishlatiladigan birliklardan biri.",
+jp:"りんごを ひとつ かいました。",
+romaji:"Ringo o hitotsu kaimashita.",
+uz:"Bitta olma sotib oldim."
+},
+
+{
+rule:"～人",
+desc:"Odamlarni sanash uchun ishlatiladi.",
+jp:"がくせいが さんにん います。",
+romaji:"Gakusei ga sannin imasu.",
+uz:"Uchta talaba bor."
+},
+
+{
+rule:"～枚",
+desc:"Yupqa va tekis narsalarni sanashda ishlatiladi.",
+jp:"かみを にまい ください。",
+romaji:"Kami o nimai kudasai.",
+uz:"Iltimos, ikki varaq qog‘oz bering."
+},
+
+{
+rule:"～台",
+desc:"Mashina va qurilmalarni sanashda ishlatiladi.",
+jp:"くるまが にだい あります。",
+romaji:"Kuruma ga nidai arimasu.",
+uz:"Ikki mashina bor."
+}
+
+]
+},
+
+/* =========================
+12-KUN
+========================= */
+
+{
+title:"12-Kun: Taqqoslash",
+
+rules:[
+
+{
+rule:"N1 は N2 より Adj です",
+desc:"N1 N2 ga qaraganda qandaydir sifatga ko‘proq ega.",
+jp:"でんしゃは バスより はやいです。",
+romaji:"Densha wa basu yori hayai desu.",
+uz:"Poyezd avtobusdan tezroq."
+},
+
+{
+rule:"N1 と N2 と どちらが Adj ですか",
+desc:"Ikki narsadan qaysi biri ekanini so‘rash.",
+jp:"コーヒーと おちゃと どちらが すきですか。",
+romaji:"Koohii to ocha to dochira ga suki desu ka.",
+uz:"Qahva va choydan qaysi birini yoqtirasiz?"
+},
+
+{
+rule:"N1 の ほうが Adj です",
+desc:"Taqqoslashda bir tomonni ajratib ko‘rsatadi.",
+jp:"おちゃの ほうが すきです。",
+romaji:"Ocha no hou ga suki desu.",
+uz:"Choyni ko‘proq yoqtiraman."
+}
+
+]
+},
+
+/* =========================
+13-KUN
+========================= */
+
+{
+title:"13-Kun: Istak va maqsad",
+
+rules:[
+
+{
+rule:"V-たいです",
+desc:"Biror ishni qilish istagini bildiradi.",
+jp:"にほんへ いきたいです。",
+romaji:"Nihon e ikitai desu.",
+uz:"Yaponiyaga bormoqchiman."
+},
+
+{
+rule:"N が ほしいです",
+desc:"Biror narsani xohlashni bildiradi.",
+jp:"あたらしい じしょが ほしいです。",
+romaji:"Atarashii jisho ga hoshii desu.",
+uz:"Yangi lug‘at xohlayman."
+},
+
+{
+rule:"Place へ V に 行きます",
+desc:"Biror ishni qilish maqsadida borishni bildiradi.",
+jp:"ほんを かいに いきます。",
+romaji:"Hon o kai ni ikimasu.",
+uz:"Kitob sotib olish uchun boraman."
+}
+
+]
+},
+
+/* =========================
+14-KUN
+========================= */
+
+{
+title:"14-Kun: て-shakli",
+
+rules:[
+
+{
+rule:"V-て ください",
+desc:"Biror ishni qilishni iltimos qilish.",
+jp:"ここに なまえを かいて ください。",
+romaji:"Koko ni namae o kaite kudasai.",
+uz:"Bu yerga ismingizni yozing."
+},
+
+{
+rule:"V-ても いいです",
+desc:"Ruxsat berishni bildiradi.",
+jp:"ここで しゃしんを とっても いいです。",
+romaji:"Koko de shashin o totte mo ii desu.",
+uz:"Bu yerda rasmga olish mumkin."
+},
+
+{
+rule:"V-ては いけません",
+desc:"Taqiqni bildiradi.",
+jp:"ここで たばこを すっては いけません。",
+romaji:"Koko de tabako o sutte wa ikemasen.",
+uz:"Bu yerda chekish mumkin emas."
+}
+
+]
+},
+
+/* =========================
+15-KUN
+========================= */
+
+{
+title:"15-Kun: Davomiy harakat",
+
+rules:[
+
+{
+rule:"V-ています",
+desc:"Hozir davom etayotgan harakatni bildiradi.",
+jp:"いま べんきょうしています。",
+romaji:"Ima benkyou shiteimasu.",
+uz:"Hozir o‘qiyapman."
+},
+
+{
+rule:"V-ています — holat",
+desc:"Ba’zi fe’llarda natijaviy holatni bildirishi mumkin.",
+jp:"けっこんしています。",
+romaji:"Kekkon shiteimasu.",
+uz:"Turmush qurganman."
+},
+
+{
+rule:"V-ても いいですか",
+desc:"Ruxsat so‘rashning muloyim shakli.",
+jp:"ここに すわっても いいですか。",
+romaji:"Koko ni suwatte mo ii desu ka.",
+uz:"Bu yerga o‘tirsam bo‘ladimi?"
+}
+
+]
+},
+
+/* =========================
+16-KUN
+========================= */
+
+{
+title:"16-Kun: Harakatlarni bog‘lash",
+
+rules:[
+
+{
+rule:"V-て、V",
+desc:"Bir nechta harakatni ketma-ket bog‘laydi.",
+jp:"あさ おきて、シャワーを あびます。",
+romaji:"Asa okite, shawaa o abimasu.",
+uz:"Ertalab turib, dush qabul qilaman."
+},
+
+{
+rule:"N で、N",
+desc:"Otlarni bog‘lashda ishlatilishi mumkin.",
+jp:"これは にほんの りょうりで、おいしいです。",
+romaji:"Kore wa nihon no ryouri de, oishii desu.",
+uz:"Bu yapon taomi va mazali."
+},
+
+{
+rule:"V-てから",
+desc:"Bir ish bajarilgandan keyin boshqa ish bajarilishini bildiradi.",
+jp:"ごはんを たべてから、べんきょうします。",
+romaji:"Gohan o tabete kara, benkyou shimasu.",
+uz:"Ovqatlangandan keyin o‘qiyman."
+}
+
+]
+},
+
+/* =========================
+17-KUN
+========================= */
+
+{
+title:"17-Kun: ない-shakl",
+
+rules:[
+
+{
+rule:"V-ないで ください",
+desc:"Biror ishni qilmaslikni iltimos qiladi.",
+jp:"ここで たばこを すわないで ください。",
+romaji:"Koko de tabako o suwanaide kudasai.",
+uz:"Bu yerda chekmang."
+},
+
+{
+rule:"V-なければ なりません",
+desc:"Majburiyatni bildiradi: qilish kerak.",
+jp:"べんきょうしなければ なりません。",
+romaji:"Benkyou shinakereba narimasen.",
+uz:"O‘qishim kerak."
+},
+
+{
+rule:"V-なくても いいです",
+desc:"Biror ishni qilish shart emasligini bildiradi.",
+jp:"あした こなくても いいです。",
+romaji:"Ashita konakute mo ii desu.",
+uz:"Ertaga kelmasangiz ham bo‘ladi."
+}
+
+]
+},
+
+/* =========================
+18-KUN
+========================= */
+
+{
+title:"18-Kun: Lug‘at shakli va qobiliyat",
+
+rules:[
+
+{
+rule:"V-る ことが できます",
+desc:"Biror ishni qila olish qobiliyatini bildiradi.",
+jp:"かんじを よむ ことが できます。",
+romaji:"Kanji o yomu koto ga dekimasu.",
+uz:"Kanjini o‘qiy olaman."
+},
+
+{
+rule:"N の しゅみは V-る ことです",
+desc:"Hobbi yoki mashg‘ulotni aytishda ishlatiladi.",
+jp:"しゅみは えいがを みる ことです。",
+romaji:"Shumi wa eiga o miru koto desu.",
+uz:"Hobbiyim film ko‘rish."
+},
+
+{
+rule:"V-る まえに",
+desc:"Biror ish qilishdan oldingi vaqtni bildiradi.",
+jp:"ねる まえに ほんを よみます。",
+romaji:"Neru mae ni hon o yomimasu.",
+uz:"Uxlashdan oldin kitob o‘qiyman."
+}
+
+]
+},
+
+/* =========================
+19-KUN
+========================= */
+
+{
+title:"19-Kun: た-shakli va tajriba",
+
+rules:[
+
+{
+rule:"V-た ことが あります",
+desc:"Oldin biror ishni qilib ko‘rgan tajribani bildiradi.",
+jp:"にほんへ いった ことが あります。",
+romaji:"Nihon e itta koto ga arimasu.",
+uz:"Yaponiyaga borib ko‘rganman."
+},
+
+{
+rule:"V-たり、V-たり します",
+desc:"Bir nechta harakatni misol sifatida sanaydi.",
+jp:"えいがを みたり、おんがくを きいたり します。",
+romaji:"Eiga o mitari, ongaku o kiitari shimasu.",
+uz:"Film ko‘raman, musiqa tinglayman va hokazo."
+},
+
+{
+rule:"Adj-く なります",
+desc:"Sifatning o‘zgarishini bildiradi.",
+jp:"さむく なりました。",
+romaji:"Samuku narimashita.",
+uz:"Sovuq bo‘lib qoldi."
+}
+
+]
+},
+
+/* =========================
+20-KUN
+========================= */
+
+{
+title:"20-Kun: Oddiy uslub",
+
+rules:[
+
+{
+rule:"Plain form",
+desc:"Do‘stlar va norasmiy vaziyatlarda ishlatiladigan fe’l shakllari.",
+jp:"あした とうきょうへ いく。",
+romaji:"Ashita Toukyou e iku.",
+uz:"Ertaga Tokioga boraman."
+},
+
+{
+rule:"Plain negative",
+desc:"Oddiy inkor shakli.",
+jp:"あした いかない。",
+romaji:"Ashita ikanai.",
+uz:"Ertaga bormayman."
+},
+
+{
+rule:"Plain past",
+desc:"O‘tgan zamonning oddiy shakli.",
+jp:"きのう いった。",
+romaji:"Kinou itta.",
+uz:"Kecha bordim."
+}
+
+]
+},
+
+/* =========================
+21-KUN
+========================= */
+
+{
+title:"21-Kun: Fikr va iqtibos",
+
+rules:[
+
+{
+rule:"Plain form + と おもいます",
+desc:"Shaxsiy fikr yoki taxminni bildiradi.",
+jp:"あした あめが ふると おもいます。",
+romaji:"Ashita ame ga furu to omoimasu.",
+uz:"Ertaga yom‘ir yog‘adi deb o‘ylayman."
+},
+
+{
+rule:"Plain form + と いいます",
+desc:"Kimningdir aytgan gapini mazmunan keltirish.",
+jp:"せんせいは あした テストが あると いいました。",
+romaji:"Sensei wa ashita tesuto ga aru to iimashita.",
+uz:"O‘qituvchi ertaga test borligini aytdi."
+},
+
+{
+rule:"N について",
+desc:"Biror mavzu haqida gapirishni bildiradi.",
+jp:"にほんについて べんきょうします。",
+romaji:"Nihon ni tsuite benkyou shimasu.",
+uz:"Yaponiya haqida o‘rganaman."
+}
+
+]
+},
+
+/* =========================
+22-KUN
+========================= */
+
+{
+title:"22-Kun: Aniqlovchi gaplar",
+
+rules:[
+
+{
+rule:"Clause + N",
+desc:"Fe’l yoki kichik gap otni aniqlaydi.",
+jp:"これは わたしが つくった ケーキです。",
+romaji:"Kore wa watashi ga tsukutta keeki desu.",
+uz:"Bu men tayyorlagan tort."
+},
+
+{
+rule:"V-る + N",
+desc:"Lug‘at shaklidagi fe’l otni aniqlashi mumkin.",
+jp:"これは よむ ほんです。",
+romaji:"Kore wa yomu hon desu.",
+uz:"Bu o‘qiladigan kitob."
+},
+
+{
+rule:"V-た + N",
+desc:"Bajarilgan harakat bilan otni aniqlaydi.",
+jp:"きのう かった ほんです。",
+romaji:"Kinou katta hon desu.",
+uz:"Bu kecha sotib olingan kitob."
+}
+
+]
+},
+
+/* =========================
+23-KUN
+========================= */
+
+{
+title:"23-Kun: とき va shart",
+
+rules:[
+
+{
+rule:"V-る とき",
+desc:"Harakatdan oldingi yoki shu paytdagi vaqtni bildiradi.",
+jp:"にほんへ いく とき、カメラを もちます。",
+romaji:"Nihon e iku toki, kamera o mochimasu.",
+uz:"Yaponiyaga borayotganda kamera olaman."
+},
+
+{
+rule:"V-た とき",
+desc:"Harakat bajarilgandan keyingi paytni bildirishi mumkin.",
+jp:"うちへ かえった とき、でんわしました。",
+romaji:"Uchi e kaetta toki, denwa shimashita.",
+uz:"Uyga qaytgach, telefon qildim."
+},
+
+{
+rule:"V-る と",
+desc:"Tabiiy yoki muntazam natijani bildiruvchi bog‘lanish.",
+jp:"この ボタンを おすと、ドアが あきます。",
+romaji:"Kono botan o osu to, doa ga akimasu.",
+uz:"Bu tugmani bossangiz, eshik ochiladi."
+}
+
+]
+},
+
+/* =========================
+24-KUN
+========================= */
+
+{
+title:"24-Kun: くれる va yordam",
+
+rules:[
+
+{
+rule:"N が わたしに N を くれます",
+desc:"Boshqa kishi menga narsa berganda ishlatiladi.",
+jp:"ともだちは わたしに ほんを くれました。",
+romaji:"Tomodachi wa watashi ni hon o kuremashita.",
+uz:"Do‘stim menga kitob berdi."
+},
+
+{
+rule:"V-て あげます",
+desc:"Boshqa kishiga yordam sifatida biror ishni bajarishni bildiradi.",
+jp:"ともだちに にほんごを おしえて あげました。",
+romaji:"Tomodachi ni nihongo o oshiete agemashita.",
+uz:"Do‘stimga yapon tilini o‘rgatib berdim."
+},
+
+{
+rule:"V-て もらいます",
+desc:"Birovdan biror ishni qilib berishini olish.",
+jp:"せんせいに みて もらいました。",
+romaji:"Sensei ni mite moraimashita.",
+uz:"O‘qituvchidan ko‘rib berishini so‘radim."
+}
+
+]
+},
+
+/* =========================
+25-KUN
+========================= */
+
+{
+title:"25-Kun: たら sharti",
+
+rules:[
+
+{
+rule:"V-たら",
+desc:"“Agar ... bo‘lsa” yoki “...ganda” kabi shart ma’nolarini beradi.",
+jp:"あめが ふったら、でかけません。",
+romaji:"Ame ga futtara, dekakemasen.",
+uz:"Agar yomg‘ir yog‘sa, ko‘chaga chiqmayman."
+},
+
+{
+rule:"V-たら、～",
+desc:"Shart bajarilgach keyingi harakatni bildirishi mumkin.",
+jp:"しごとが おわったら、かえります。",
+romaji:"Shigoto ga owattara, kaerimasu.",
+uz:"Ish tugagach, uyga qaytaman."
+},
+
+{
+rule:"もし ～ たら",
+desc:"もし shartni kuchaytiradi va “agar mabodo” ma’nosini beradi.",
+jp:"もし ひまだったら、いっしょに いきませんか。",
+romaji:"Moshi hima dattara, issho ni ikimasen ka.",
+uz:"Agar bo‘sh bo‘lsangiz, birga bormaysizmi?"
+}
+
+]
+}
+
+];
+
+
+let current=0;
+
+const days=document.getElementById("days");
+
+lessons.forEach((lesson,index)=>{
+
+const button=document.createElement("button");
+
+button.className="day-btn";
+
+button.textContent=index+1;
+
+button.onclick=()=>{
+showDay(index);
+};
+
+days.appendChild(button);
+
+});
+
+
+function showDay(index){
+
+current=index;
+
+const lesson=lessons[index];
+
+let cards="";
+
+lesson.rules.forEach((rule,index)=>{
+
+cards+=`
+
+<article class="rule-card">
+
+<div class="rule-title">
+${index+1}. ${rule.rule}
+</div>
+
+<div class="explain">
+${rule.desc}
+</div>
+
+<div class="label">
+Misol
+</div>
+
+<div class="jp">
+${rule.jp}
+</div>
+
+<div class="romaji">
+${rule.romaji}
+</div>
+
+<div class="uz">
+${rule.uz}
+</div>
+
+<div class="controls">
+
+<button onclick='speakText(${JSON.stringify(rule.jp)})'>
+🔊 Talaffuz
+</button>
+
+</div>
+
+</article>
+
+`;
+
+});
+
+
+document.getElementById("lesson").innerHTML=`
+
+<div class="badge">
+${index+1}-KUN
+</div>
+
+<h2>
+${lesson.title}
+</h2>
+
+<p class="intro">
+
+Bu darsdagi grammatik shakllarni birma-bir o‘rganing.
+Avval qoidani o‘qing, keyin yaponcha misolni ovoz chiqarib ayting.
+So‘ngra o‘zbekcha ma’nosini tushunishga harakat qiling.
+
+</p>
+
+${cards}
+
+<div class="tip">
+
+💡 <b>O‘rganish maslahati:</b>
+
+Har bir grammatik qoidani alohida yodlashdan ko‘ra,
+uning qanday vaziyatda ishlatilishini tushunishga harakat qiling.
+Misollarni bir necha marta ovoz chiqarib o‘qish ham foydali.
+
+</div>
+
+<div class="controls">
+
+<button onclick="prevDay()">
+← Oldingi
+</button>
+
+<button onclick="nextDay()">
+Keyingi →
+</button>
+
+</div>
+
+<div class="progress">
+
+${index+1} / ${lessons.length}-dars
+
+</div>
+
+`;
+
+
+document
+.querySelectorAll(".day-btn")
+.forEach((button,index2)=>{
+
+button.classList.toggle(
+"active",
+index2===current
+);
+
+});
+
+
+window.scrollTo({
+top:document.querySelector(".lesson").offsetTop-10,
+behavior:"smooth"
+});
+
+}
+
+
+function nextDay(){
+
+if(current===lessons.length-1){
+
+showDay(0);
+
+}else{
+
+showDay(current+1);
+
+}
+
+}
+
+
+function prevDay(){
+
+if(current===0){
+
+showDay(lessons.length-1);
+
+}else{
+
+showDay(current-1);
+
+}
+
+}
+
+
+function speakText(text){
+
+if(!("speechSynthesis" in window)){
+
+alert("Brauzeringiz talaffuz funksiyasini qo‘llab-quvvatlamaydi.");
+
+return;
+
+}
+
+speechSynthesis.cancel();
+
+const voice=new SpeechSynthesisUtterance(text);
+
+voice.lang="ja-JP";
+
+voice.rate=0.85;
+
+speechSynthesis.speak(voice);
+
+}
+
+
+showDay(0);
+
+</script>
+
+</body>
+</html>
