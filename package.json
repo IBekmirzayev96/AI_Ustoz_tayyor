@@ -1,0 +1,1 @@
+{"name":"ai-ustoz-japanese","version":"1.0.0","type":"module","scripts":{"start":"node server.js","dev":"node server.js"},"dependencies":{"@google/generative-ai":"^0.24.1","dotenv":"^16.4.5","express":"^4.21.2","openai":"^4.80.1"}}

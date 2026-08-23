@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapon Tili Interaktiv Platformasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .perspective { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-white font-sans min-h-screen flex flex-col justify-between p-4">
+
+    <!-- Header -->
+    <header class="max-w-4xl mx-auto w-full flex justify-between items-center py-4 border-b border-gray-800">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#e11d48] text-white px-3 py-1.5 rounded-lg text-sm font-bold tracking-wider">
+                日本語
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-wide">Yapon Tili Platformasi</h1>
+                <p class="text-xs text-gray-400">JLPT N5 Kanji, Lug'at, Grammatika & Dialoglar</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-plus"></i> So'z Qo'shish
+            </button>
+            <div class="bg-[#1e293b] border border-gray-700 px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm text-amber-400 font-semibold">
+                <i class="fa-solid fa-fire text-amber-500"></i>
+                <span id="streak">0</span> <span class="text-gray-400 text-xs font-normal">Ochko</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-2xl mx-auto w-full flex-1 flex flex-col items-center justify-center my-6 gap-6">
+
+        <!-- Mode Switcher -->
+        <div class="bg-[#1e293b] p-1.5 rounded-xl flex gap-1.5 border border-gray-700/50 w-full overflow-x-auto justify-start md:justify-center">
+            <button type="button" id="mode-flashcard" onclick="switchMode('flashcard')" class="px-3 py-2 rounded-lg text-xs font-medium bg-[#e11d48] text-white flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-clone"></i> Flashcard
+            </button>
+            <button type="button" id="mode-dialogue" onclick="switchMode('dialogue')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-comments text-emerald-400"></i> Muloqot
+            </button>
+            <button type="button" id="mode-grammar" onclick="switchMode('grammar')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-book-bookmark"></i> Grammatika
+            </button>
+            <button type="button" id="mode-quiz" onclick="switchMode('quiz')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-graduation-cap"></i> Test
+            </button>
+            <button type="button" id="mode-audio" onclick="switchMode('audio')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-headphones"></i> Audio
+            </button>
+            <button type="button" id="mode-reverse" onclick="switchMode('reverse')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-language"></i> UZ → JP
+            </button>
+            <button type="button" id="mode-ai" onclick="switchMode('ai')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-robot text-violet-400"></i> AI Ustoz
+            </button>
+            <button type="button" id="mode-speech" onclick="switchMode('speech')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-microphone"></i> Talaffuz
+            </button>
+            <button type="button" id="mode-list" onclick="switchMode('list')" class="px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-list-check"></i> Qidiruv
+            </button>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+            <div class="relative" onclick="event.stopPropagation()">
+                <label class="text-[11px] text-gray-400 font-semibold mb-1 flex justify-between items-center">
+                    <span>DARS / KUN BO'LIMLARI (1-19):</span>
+                    <span class="text-rose-400 cursor-pointer hover:underline" onclick="toggleAllDays()">Barchasi / Tozalash</span>
+                </label>
+                <div onclick="toggleDayDropdown()" class="bg-[#1e293b] border border-gray-700 text-white text-sm rounded-lg px-4 py-2 flex justify-between items-center cursor-pointer min-h-[42px]">
+                    <span id="selected-days-text" class="truncate text-rose-400 font-semibold">1-19 kunlar tanlangan</span>
+                    <i class="fa-solid fa-chevron-down text-xs text-gray-400 ml-2"></i>
+                </div>
+
+                <div id="day-dropdown-menu" class="hidden absolute top-full left-0 right-0 mt-1 bg-[#1e293b] border border-gray-700 rounded-xl p-3 z-50 shadow-2xl max-h-60 overflow-y-auto space-y-1.5">
+                    <div class="flex justify-between items-center pb-2 mb-2 border-b border-gray-700 text-xs">
+                        <button type="button" onclick="selectAllDays()" class="text-emerald-400 font-semibold hover:underline">Barchasini tanlash</button>
+                        <button type="button" onclick="deselectAllDays()" class="text-rose-400 font-semibold hover:underline">Tozalash</button>
+                    </div>
+                    <div id="days-checkbox-container" class="grid grid-cols-2 gap-1.5"></div>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[11px] text-gray-400 font-semibold mb-1 block">TURKUM (KATEGORIYA):</label>
+                <select id="level-select" onchange="changeCategory()" class="bg-[#1e293b] border border-gray-700 text-white text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-rose-500 focus:outline-none cursor-pointer w-full">
+                    <option value="n5_kanji">JLPT N5 — Kanji (Iyerogliflar)</option>
+                    <option value="n5_vocab">JLPT N5 — Lug'at (Kotoba)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- TARTIBLASH REJIMI PANELI -->
+        <div class="w-full bg-[#1e293b]/60 border border-gray-800 p-3 rounded-xl flex flex-col gap-1.5">
+            <span class="text-[11px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-down-short-wide text-amber-400"></i> TARTIBLASH REJIMI:
+            </span>
+            <div class="grid grid-cols-2 gap-2 w-full">
+                <button type="button" id="sort-sequential-btn" onclick="setSortMode('sequential')" class="bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg">
+                    <i class="fa-solid fa-arrow-down-1-9"></i> Tartib bilan
+                </button>
+                <button type="button" id="sort-random-btn" onclick="setSortMode('random')" class="bg-[#0f172a] text-gray-400 border border-gray-700/80 hover:text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-shuffle"></i> Aralash
+                </button>
+            </div>
+        </div>
+
+        <!-- FLASHCARD SECTION -->
+        <div id="section-flashcard" class="w-full flex flex-col items-center gap-4">
+            <div class="w-full h-[280px] perspective cursor-pointer" onclick="flipCard()">
+                <div id="card-inner" class="w-full h-full relative transform-style-3d shadow-2xl rounded-2xl">
+                    <div class="absolute w-full h-full backface-hidden bg-[#1e293b]/90 border border-gray-700/80 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+                        <span id="card-category-label" class="text-xs font-semibold text-rose-400 tracking-widest uppercase mb-2">KANJI / YAPONCHA</span>
+                        <div id="kanji-display" class="text-6xl font-extrabold text-white my-4 px-2 text-center">-</div>
+                        <span class="text-[11px] text-gray-500 mt-2"><i class="fa-solid fa-rotate"></i> O'qilishi va ma'nosini ko'rish uchun bosing</span>
+                    </div>
+                    <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-[#1e293b] border border-rose-500/50 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+                        <span class="text-xs font-semibold text-emerald-400 tracking-widest uppercase mb-1">O'QILISHI & TARJIMA</span>
+                        <div id="reading-display" class="text-2xl font-extrabold text-amber-300 mb-1">-</div>
+                        <div id="romaji-display" class="text-sm font-mono text-gray-400 mb-3">-</div>
+                        <div id="meaning-display" class="text-xl font-bold text-emerald-300 border-t border-gray-700/60 pt-2 w-full max-w-[250px]">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between w-full gap-4">
+                <button type="button" onclick="prevCard()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition w-1/3 justify-center">
+                    <i class="fa-solid fa-chevron-left"></i> Oldingisi
+                </button>
+                <button type="button" onclick="speakWord()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition text-rose-400">
+                    <i class="fa-solid fa-volume-high"></i> Eshitish
+                </button>
+                <button type="button" onclick="nextCard()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition w-1/3 justify-center">
+                    Keyingisi <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="text-gray-400 text-xs font-medium tracking-wider">
+                <span id="current-index" class="text-white">0</span> / <span id="total-cards">0</span>
+            </div>
+        </div>
+
+        <!-- MULOQOT SECTION -->
+        <div id="section-dialogue" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col items-center gap-4">
+            <div class="w-full flex justify-between items-center border-b border-gray-700/50 pb-3">
+                <span class="text-xs font-semibold text-emerald-400 tracking-widest uppercase"><i class="fa-solid fa-comments"></i> INTERAKTIV MULOQOT</span>
+                <span class="text-xs text-gray-400"><span id="dialogue-index" class="text-white">0</span> / <span id="dialogue-total">0</span></span>
+            </div>
+            <div class="w-full flex items-center justify-between my-1">
+                <div>
+                    <h3 id="dialogue-title" class="text-lg font-bold text-white">Suhbat</h3>
+                    <p id="dialogue-desc" class="text-xs text-gray-400">Tegishli dialog</p>
+                </div>
+            </div>
+            <div id="dialogue-lines-container" class="w-full flex flex-col gap-3 my-2 max-h-[320px] overflow-y-auto pr-1"></div>
+            <div class="flex items-center justify-between w-full gap-4 mt-2">
+                <button type="button" onclick="prevDialogue()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition w-1/2 justify-center">
+                    <i class="fa-solid fa-chevron-left"></i> Oldingi
+                </button>
+                <button type="button" onclick="nextDialogue()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition w-1/2 justify-center">
+                    Keyingi <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- GRAMMATIKA SECTION -->
+        <div id="section-grammar" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col items-center gap-4">
+            <div class="w-full flex justify-between items-center border-b border-gray-700/50 pb-3">
+                <span class="text-xs font-semibold text-rose-400 tracking-widest uppercase">JLPT N5 GRAMMATIKA</span>
+                <span class="text-xs text-gray-400"><span id="grammar-index" class="text-white">0</span> / <span id="grammar-total">0</span></span>
+            </div>
+            <div class="w-full text-center my-2">
+                <h3 id="grammar-title" class="text-2xl font-bold text-amber-400 mb-1">-</h3>
+                <p id="grammar-formula" class="text-xs font-mono bg-[#0f172a] px-3 py-1.5 rounded-lg text-rose-300 inline-block border border-gray-800">-</p>
+            </div>
+            <div class="w-full bg-[#0f172a] p-4 rounded-xl border border-gray-800 text-sm text-gray-300 leading-relaxed" id="grammar-explanation">-</div>
+            <div class="w-full bg-slate-900/60 p-4 rounded-xl border border-rose-500/20 flex flex-col gap-2">
+                <span class="text-[10px] font-bold text-emerald-400 tracking-wider uppercase">NAMUNA JUMLA</span>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div id="grammar-example-jp" class="text-base font-bold text-white">-</div>
+                        <div id="grammar-example-reading" class="text-xs text-gray-400">-</div>
+                        <div id="grammar-example-uz" class="text-sm text-emerald-300 mt-1">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between w-full gap-4 mt-2">
+                <button type="button" onclick="prevGrammar()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition w-1/2 justify-center">
+                    <i class="fa-solid fa-chevron-left"></i> Oldingisi
+                </button>
+                <button type="button" onclick="nextGrammar()" class="bg-[#1e293b] hover:bg-gray-800 border border-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition w-1/2 justify-center">
+                    Keyingisi <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- TEST SECTION -->
+        <div id="section-quiz" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col items-center">
+            <span class="text-xs font-semibold text-rose-400 tracking-widest uppercase mb-1">STANDART TEST</span>
+            <div id="quiz-question" class="text-5xl font-extrabold text-white my-3">-</div>
+            <p class="text-xs text-gray-400 mb-4">To'g'ri tarjimani tanlang:</p>
+            <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full"></div>
+        </div>
+
+        <!-- AUDIO TEST -->
+        <div id="section-audio" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col items-center">
+            <span class="text-xs font-semibold text-rose-400 tracking-widest uppercase mb-1">AUDIO TEST</span>
+            <p class="text-xs text-gray-400 mb-4">So'zni eshiting va to'g'ri tarjimani toping:</p>
+            <button type="button" onclick="playAudioQuestion()" class="bg-rose-600 hover:bg-rose-500 text-white p-5 rounded-full my-2 shadow-lg transition">
+                <i class="fa-solid fa-volume-high text-2xl"></i>
+            </button>
+            <div id="audio-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mt-4"></div>
+        </div>
+
+        <!-- REVERSE QUIZ -->
+        <div id="section-reverse" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col items-center">
+            <span class="text-xs font-semibold text-rose-400 tracking-widest uppercase mb-1">O'ZBEKCHA → YAPONCHA</span>
+            <div id="reverse-question" class="text-2xl font-bold text-emerald-400 my-4 text-center">-</div>
+            <div id="reverse-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full"></div>
+        </div>
+
+        <!-- TALAFFUZ -->
+        <div id="section-speech" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col items-center text-center">
+            <span class="text-xs font-semibold text-rose-400 tracking-widest uppercase mb-1">TALAFFUZ AMALIYOTI</span>
+            <div id="speech-target" class="text-4xl font-extrabold text-white my-2">-</div>
+            <div id="speech-target-reading" class="text-sm text-amber-400 mb-4">-</div>
+            <div id="speech-status" class="text-xs text-gray-400 mb-4 min-h-[20px]">Mikrofonni bosing va yaponcha ayting...</div>
+            <button type="button" onclick="startSpeechRecognition()" class="bg-rose-600 hover:bg-rose-500 text-white w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg transition my-2">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <div id="speech-result" class="mt-4 p-3 bg-[#0f172a] rounded-xl border border-gray-800 w-full text-sm font-semibold hidden"></div>
+        </div>
+
+        <!-- QIDIRUV VA LUG'AT -->
+        <div id="section-ai" class="w-full bg-[#1e293b]/80 border border-violet-500/30 rounded-2xl p-4 hidden flex-col gap-4">
+<div class="flex items-center justify-between border-b border-gray-700 pb-3"><div><h2 class="text-lg font-bold text-white">🤖 AI Yapon Tili Ustozi</h2><p class="text-xs text-gray-400">N5/N4 darajasida yaponcha suhbat qiling</p></div><button onclick="finishAiConversation()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-2 rounded-lg text-xs font-bold">📊 Baholash</button></div>
+<div id="ai-chat-messages" class="h-[380px] overflow-y-auto flex flex-col gap-3 p-2"></div>
+<div class="flex gap-2"><input id="ai-chat-input" type="text" placeholder="Yaponcha yozing... Masalan: こんにちは" class="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500" onkeydown="if(event.key==='Enter') sendAiMessage()"><button onclick="startAiVoice()" class="bg-rose-600 hover:bg-rose-500 px-4 rounded-xl">🎤</button><button onclick="sendAiMessage()" class="bg-violet-600 hover:bg-violet-500 px-4 rounded-xl">➤</button></div>
+<div id="ai-status" class="text-xs text-gray-400 text-center min-h-[20px]">AI suhbatga tayyor.</div><div id="ai-evaluation" class="hidden bg-[#0f172a] border border-emerald-500/30 rounded-xl p-4"></div></div>
+
+        <div id="section-list" class="w-full bg-[#1e293b]/80 border border-gray-700/80 rounded-2xl p-6 hidden flex-col gap-4">
+            <input type="text" id="search-input" onkeyup="filterList()" placeholder="So'z, kanji yoki tarjimani qidiring..." class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 text-white">
+            <div id="words-list" class="max-h-[300px] overflow-y-auto space-y-2 pr-1"></div>
+        </div>
+
+    </main>
+
+    <!-- YANGI SO'Z QO'SHISH MODAL OYNASI -->
+    <div id="add-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#1e293b] border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl flex flex-col gap-4">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                <h3 class="text-base font-bold text-white">Yangi So'z yoki Kanji Qo'shish</h3>
+                <button onclick="closeAddModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form onsubmit="saveCustomWord(event)" class="flex flex-col gap-3">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Kun (Dars):</label>
+                    <select id="custom-day-select" class="w-full bg-[#0f172a] border border-gray-700 text-white text-sm rounded-lg p-2.5"></select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Turkum:</label>
+                    <select id="custom-cat-select" class="w-full bg-[#0f172a] border border-gray-700 text-white text-sm rounded-lg p-2.5">
+                        <option value="n5_kanji">Kanji (Iyeroglif)</option>
+                        <option value="n5_vocab">Lug'at (Kotoba)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">So'z / Kanji (Yaponcha):</label>
+                    <input type="text" id="custom-word" required placeholder="Masalan: 本 yoki ほん" class="w-full bg-[#0f172a] border border-gray-700 text-white text-sm rounded-lg p-2.5">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">O'qilishi (Hiragana/Katakana):</label>
+                    <input type="text" id="custom-reading" required placeholder="Masalan: ほん" class="w-full bg-[#0f172a] border border-gray-700 text-white text-sm rounded-lg p-2.5">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Romaji (Lotincha):</label>
+                    <input type="text" id="custom-romaji" placeholder="Masalan: hon" class="w-full bg-[#0f172a] border border-gray-700 text-white text-sm rounded-lg p-2.5">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">O'zbekcha Ma'nosi:</label>
+                    <input type="text" id="custom-meaning" required placeholder="Masalan: Kitob" class="w-full bg-[#0f172a] border border-gray-700 text-white text-sm rounded-lg p-2.5">
+                </div>
+
+                <div class="flex gap-2 mt-2">
+                    <button type="button" onclick="closeAddModal()" class="w-1/2 bg-gray-700 hover:bg-gray-600 text-white py-2.5 rounded-xl text-xs font-bold">Bekor qilish</button>
+                    <button type="submit" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white py-2.5 rounded-xl text-xs font-bold">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const database = {
+            n5_kanji: [
+                // 1-KUN (山, 川, 田)
+                { day: 1, word: '山', reading: 'やま', romaji: 'yama', meaning: "Tog'" },
+                { day: 1, word: '富士山', reading: 'ふじさん', romaji: 'fujisan', meaning: "Fuji tog'i" },
+                { day: 1, word: '山道', reading: 'やまみち', romaji: 'yamamichi', meaning: "Tog' yo'li" },
+                { day: 1, word: '登山', reading: 'とざん', romaji: 'tozan', meaning: "Tog'ga chiqish" },
+                { day: 1, word: '火山', reading: 'かざん', romaji: 'kazan', meaning: "Vulqon" },
+                { day: 1, word: '川', reading: 'かわ', romaji: 'kawa', meaning: "Daryo" },
+                { day: 1, word: '天の川', reading: 'あまのがわ', romaji: 'amanogawa', meaning: "Somon yo'li" },
+                { day: 1, word: 'ナイル川', reading: 'ないるがわ', romaji: 'nairugawa', meaning: "Nil daryosi" },
+                { day: 1, word: '川遊び', reading: 'かわあそび', romaji: 'kawaasobi', meaning: "Daryo bo'yida oynash/hordiq" },
+                { day: 1, word: '河川', reading: 'かせん', romaji: 'kasen', meaning: "Daryolar / Suv yo'llari" },
+                { day: 1, word: '田んぼ', reading: 'たんぼ', romaji: 'tanbo', meaning: "Guruch (sholi) maydoni" },
+                { day: 1, word: '田植え', reading: 'たうえ', romaji: 'taue', meaning: "Sholi ekish" },
+                { day: 1, word: '田舎', reading: 'いなか', romaji: 'inaka', meaning: "Qishloq" },
+                { day: 1, word: '水田', reading: 'すいでん', romaji: 'suiden', meaning: "Suvli guruch maydoni" },
+                { day: 1, word: '田園', reading: 'でんえん', romaji: "den'en", meaning: "Qishloq yerlari / Dala" },
+
+                // 2-KUN (日, 月, 火)
+                { day: 2, word: '日曜日', reading: 'にちようび', romaji: 'nichiyoubi', meaning: "Yakshanba" },
+                { day: 2, word: '日本', reading: 'にほん', romaji: 'nihon', meaning: "Yaponiya" },
+                { day: 2, word: '誕生日', reading: 'たんじょうび', romaji: 'tanjoubi', meaning: "Tug'ilgan kun" },
+                { day: 2, word: '毎日', reading: 'まいにち', romaji: 'mainichi', meaning: "Har kuni" },
+                { day: 2, word: '日記', reading: 'にっき', romaji: 'nikki', meaning: "Kundalik" },
+                { day: 2, word: '月', reading: 'つき', romaji: 'tsuki', meaning: "Oy (osmondagi / vaqt)" },
+                { day: 2, word: '一月', reading: 'いちがつ', romaji: 'ichigatsu', meaning: "Yanvar" },
+                { day: 2, word: '毎月', reading: 'まいつき', romaji: 'maitsuki', meaning: "Har oy" },
+                { day: 2, word: '来月', reading: 'らいげつ', romaji: 'raigetsu', meaning: "Keyingi oy" },
+                { day: 2, word: 'お正月', reading: 'おしょうがつ', romaji: 'oshougatsu', meaning: "Yangi yil bayrami" },
+                { day: 2, word: '火', reading: 'ひ', romaji: 'hi', meaning: "Olov" },
+                { day: 2, word: '火事', reading: 'かじ', romaji: 'kaji', meaning: "Yong'in" },
+                { day: 2, word: '花火', reading: 'はなび', romaji: 'hanabi', meaning: "Mushakbozlik" },
+                { day: 2, word: '火山', reading: 'かざん', romaji: 'kazan', meaning: "Vulqon" },
+                { day: 2, word: '火曜日', reading: 'かようび', romaji: 'kayoubi', meaning: "Seshanba" },
+
+                // 3-KUN (水, 木, 金)
+                { day: 3, word: '水', reading: 'みず', romaji: 'mizu', meaning: "Suv" },
+                { day: 3, word: '水泳', reading: 'すいえい', romaji: 'suiei', meaning: "Suzish" },
+                { day: 3, word: '水着', reading: 'みずぎ', romaji: 'mizugi', meaning: "Cho'milish kostyumi" },
+                { day: 3, word: '水道', reading: 'すいどう', romaji: 'suidou', meaning: "Suv ta'minoti tizimi" },
+                { day: 3, word: '水色', reading: 'みずいろ', romaji: 'mizuiro', meaning: "Och ko'k (suv rangi)" },
+                { day: 3, word: '木', reading: 'き', romaji: 'ki', meaning: "Daraxt" },
+                { day: 3, word: '木曜日', reading: 'もくようび', romaji: 'mokuyoubi', meaning: "Payshanba" },
+                { day: 3, word: '木陰', reading: 'こかげ', romaji: 'kokage', meaning: "Daraxt soyasi" },
+                { day: 3, word: 'お金', reading: 'おかね', romaji: 'okane', meaning: "Pul" },
+                { day: 3, word: '現金', reading: 'げんきん', romaji: 'genkin', meaning: "Naqd pul" },
+                { day: 3, word: '料金', reading: 'りょうきん', romaji: 'ryoukin', meaning: "To'lov" },
+                { day: 3, word: '税金', reading: 'ぜいきん', romaji: 'zeikin', meaning: "Soliq" },
+                { day: 3, word: '金閣寺', reading: 'きんかくじ', romaji: 'kinkakuji', meaning: "Kinkaku-ji ibodatxonasi" },
+
+                // 4-KUN (車, 門, 人, 子)
+                { day: 4, word: '車', reading: 'くるま', romaji: 'kuruma', meaning: "Mashina" },
+                { day: 4, word: '電車', reading: 'でんしゃ', romaji: 'densha', meaning: "Poyezd (elektr poyezdi)" },
+                { day: 4, word: '自転車', reading: 'じてんしゃ', romaji: 'jitensha', meaning: "Velosiped" },
+                { day: 4, word: '駐車場', reading: 'ちゅうしゃじょう', romaji: 'chuushajou', meaning: "Avtoturar goh" },
+                { day: 4, word: '車いす', reading: 'くるまいす', romaji: 'kurumaisu', meaning: "Nogironlar aravachasi" },
+                { day: 4, word: '門', reading: 'もん', romaji: 'mon', meaning: "Darvoza" },
+                { day: 4, word: '専門', reading: 'せんもん', romaji: 'senmon', meaning: "Mutaxassislik" },
+                { day: 4, word: '人口', reading: 'じんこう', romaji: 'jinkou', meaning: "Aholi soni" },
+                { day: 4, word: '男子', reading: 'だんし', romaji: 'danshi', meaning: "O'g'il bola / Erkak" },
+
+                // 5-KUN (人, 子, 女, 竹, 雨, 貝)
+                { day: 5, word: '人', reading: 'ひと', romaji: 'hito', meaning: "Odam" },
+                { day: 5, word: '日本人', reading: 'にほんじん', romaji: 'nihonjin', meaning: "Yapon (millat)" },
+                { day: 5, word: '一人', reading: 'ひとり', romaji: 'hitori', meaning: "Bir kishi / Bir o'zi" },
+                { day: 5, word: '大人', reading: 'おとな', romaji: 'otona', meaning: "Katta odam / Voyaga yetgan" },
+                { day: 5, word: '子ども', reading: 'こども', romaji: 'kodomo', meaning: "Bola" },
+                { day: 5, word: '女子', reading: 'じょし', romaji: 'joshi', meaning: "Qiz / Ayol" },
+                { day: 5, word: '電子レンジ', reading: 'でんしれんじ', romaji: 'denshirenji', meaning: "Mikrotolqinli pech" },
+                { day: 5, word: '調子', reading: 'ちょうし', romaji: 'choushi', meaning: "Holat / Kayfiyat" },
+                { day: 5, word: '女', reading: 'おんな', romaji: 'onna', meaning: "Ayol" },
+                { day: 5, word: '彼女', reading: 'かのじょ', romaji: 'kanojyo', meaning: "U (ayol) / Qiz do'sti" },
+                { day: 5, word: '竹', reading: 'たけ', romaji: 'take', meaning: "Bambuk" },
+                { day: 5, word: '竹林', reading: 'ちくりん', romaji: 'chikurin', meaning: "Bambuk chakalakzori" },
+                { day: 5, word: '竹の子', reading: 'たけのこ', romaji: 'takenoko', meaning: "Bambuk yosh niholi" },
+                { day: 5, word: '雨', reading: 'あめ', romaji: 'ame', meaning: "Yomg'ir" },
+                { day: 5, word: '大雨', reading: 'おおあめ', romaji: 'ooame', meaning: "Kuchli yomg'ir" },
+                { day: 5, word: '梅雨', reading: 'つゆ', romaji: 'tsuyu', meaning: "Yoz boshidagi yomg'irli fasl" },
+                { day: 5, word: '雨季', reading: 'うき', romaji: 'uki', meaning: "Yomg'irli mavsum" },
+                { day: 5, word: '貝', reading: 'かい', romaji: 'kai', meaning: "Chig'anoq" },
+                { day: 5, word: '貝がら', reading: 'かいがら', romaji: 'kaigara', meaning: "Chig'anoq qobig'i" },
+                { day: 5, word: '貝柱', reading: 'かいばしら', romaji: 'kaibashira', meaning: "Chig'anoq go'shti (ichki qismi)" },
+
+                // 6-KUN (鳥, 馬, 米, 夕)
+                { day: 6, word: '鳥', reading: 'とり', romaji: 'tori', meaning: "Qush" },
+                { day: 6, word: '焼き鳥', reading: 'やきとり', romaji: 'yakitori', meaning: "Qovurilgan tovuq (yakitori)" },
+                { day: 6, word: '白鳥', reading: 'はくちょう', romaji: 'hakuchou', meaning: "Oqqush" },
+                { day: 6, word: '一石二鳥', reading: 'いっせきにちょう', romaji: 'isseki nichou', meaning: "Bir o'q bilan ikki quyonni urish" },
+                { day: 6, word: '馬', reading: 'うま', romaji: 'uma', meaning: "Ot" },
+                { day: 6, word: '競馬', reading: 'けいば', romaji: 'keiba', meaning: "Ot poygasi" },
+                { day: 6, word: '高田馬場', reading: 'たかだのばば', romaji: 'takadanobaba', meaning: "Takadanobaba (joy nomi)" },
+                { day: 6, word: '乗馬', reading: 'じょうば', romaji: 'jouba', meaning: "Otda yurish / Ot minish" },
+                { day: 6, word: '馬車', reading: 'ばしゃ', romaji: 'basha', meaning: "Aravacha (ot qo'shilgan)" },
+                { day: 6, word: '米', reading: 'こめ', romaji: 'kome', meaning: "Guruch" },
+                { day: 6, word: '米国', reading: 'べいこく', romaji: 'beikoku', meaning: "AQSH" },
+                { day: 6, word: '中米', reading: 'ちゅうべい', romaji: 'chuubei', meaning: "Markaziy Amerika" },
+                { day: 6, word: '夕', reading: 'ゆう', romaji: 'yuu', meaning: "Kechqurun" },
+                { day: 6, word: '夕べ', reading: 'ゆうべ', romaji: 'yuube', meaning: "Kecha kechqurun" },
+                { day: 6, word: '夕食', reading: 'ゆうしょく', romaji: 'yuushoku', meaning: "Kechki ovqat" },
+                { day: 6, word: '夕日', reading: 'ゆうひ', romaji: 'yuuhi', meaning: "Kun botishi" },
+                { day: 6, word: '七夕', reading: 'たなばた', romaji: 'tanabata', meaning: "Tanabata (To'quvchi yulduz bayrami)" },
+
+                // 7-KUN (牛, 黒, 口, 目)
+                { day: 7, word: '牛', reading: 'うし', romaji: 'ushi', meaning: "Sigir / Mol" },
+                { day: 7, word: '牛肉', reading: 'ぎゅうにく', romaji: 'gyuuniku', meaning: "Mol go'shti" },
+                { day: 7, word: '牛乳', reading: 'ぎゅうにゅう', romaji: 'gyuunyuu', meaning: "Sut" },
+                { day: 7, word: '牛丼', reading: 'ぎゅうどん', romaji: 'gyuudon', meaning: "Mol go'shtli guruch taomi" },
+                { day: 7, word: '黒', reading: 'くろ', romaji: 'kuro', meaning: "Qora rang" },
+                { day: 7, word: '黒い', reading: 'くろい', romaji: 'kuroi', meaning: "Qora (sifat)" },
+                { day: 7, word: '真っ黒な', reading: 'まっくろな', romaji: 'makkurona', meaning: "Qop-qora" },
+                { day: 7, word: '黒字', reading: 'くろじ', romaji: 'kuroji', meaning: "Foyda / Ortiqcha" },
+                { day: 7, word: '黒板', reading: 'こくばん', romaji: 'kokuban', meaning: "Qora doska" },
+                { day: 7, word: '口', reading: 'くち', romaji: 'kuchi', meaning: "Og'iz" },
+                { day: 7, word: '人口', reading: 'じんこう', romaji: 'jinkou', meaning: "Aholi" },
+                { day: 7, word: '出口', reading: 'でぐち', romaji: 'deguchi', meaning: "Chiqish" },
+                { day: 7, word: '入口', reading: 'いりぐち', romaji: 'iriguchi', meaning: "Kirish" },
+                { day: 7, word: '山口県', reading: 'やまぐちけん', romaji: 'yamaguchiken', meaning: "Yamaguchi prefekturasi" },
+                { day: 7, word: '目', reading: 'め', romaji: 'me', meaning: "Ko'z" },
+                { day: 7, word: '一日目', reading: 'ついたちめ', romaji: 'tsuitachime', meaning: "Birinchi kun" },
+                { day: 7, word: '目標', reading: 'もくひょう', romaji: 'mokuhyou', meaning: "Maqsad" },
+                { day: 7, word: '注目する', reading: 'ちゅうもくする', romaji: 'chuumoku suru', meaning: "Diqqat qilish / E'tibor berish" },
+                { day: 7, word: '目次', reading: 'もくじ', romaji: 'mokuji', meaning: "Mundarija" },
+
+                // 8-KUN (足, 耳, 手)
+                { day: 8, word: '足', reading: 'あし', romaji: 'ashi', meaning: "Oyoq" },
+                { day: 8, word: '遠足', reading: 'えんそく', romaji: 'ensoku', meaning: "Sayr-sayohat" },
+                { day: 8, word: '満足', reading: 'まんぞく', romaji: 'manzoku', meaning: "Qanoat / Mamnunlik" },
+                { day: 8, word: '一足', reading: 'いっそく', romaji: 'issoku', meaning: "Bir juft (poyabzal)" },
+                { day: 8, word: '耳', reading: 'みみ', romaji: 'mimi', meaning: "Quloq" },
+                { day: 8, word: '初耳', reading: 'はつみみ', romaji: 'hatsumimi', meaning: "Birinchi marta eshitish" },
+                { day: 8, word: '耳鼻科', reading: 'じびか', romaji: 'jibika', meaning: "LOR (quloq-burun-tomoq)" },
+                { day: 8, word: '耳かき', reading: 'みみかき', romaji: 'mimikaki', meaning: "Quloq tozalagich" },
+                { day: 8, word: '手', reading: 'て', romaji: 'te', meaning: "Qo'l" },
+                { day: 8, word: '相手', reading: 'あいて', romaji: 'aite', meaning: "Hamsuhbat / Raqib" },
+                { day: 8, word: '上手な', reading: 'じょうずな', romaji: 'jouzu na', meaning: "Mohir / Chapdast" },
+                { day: 8, word: '手紙', reading: 'てがみ', romaji: 'tegami', meaning: "Xat" },
+                { day: 8, word: '手伝う', reading: 'てつだう', romaji: 'tetsudau', meaning: "Yordam bermoq" },
+
+                // 9-KUN (肉, 弓, 矢, 糸)
+                { day: 9, word: '肉', reading: 'にく', romaji: 'niku', meaning: "Go'sht" },
+                { day: 9, word: '牛肉', reading: 'ぎゅうにく', romaji: 'gyuuniku', meaning: "Mol go'shti" },
+                { day: 9, word: '豚肉', reading: 'ぶたにく', romaji: 'butaniku', meaning: "Cho'chqa go'shti" },
+                { day: 9, word: '鶏肉', reading: 'とりにく', romaji: 'toriniku', meaning: "Tovuq go'shti" },
+                { day: 9, word: '肉屋', reading: 'にくや', romaji: 'nikuya', meaning: "Go'sht do'koni" },
+                { day: 9, word: '弓', reading: 'ゆみ', romaji: 'yumi', meaning: "Kamon" },
+                { day: 9, word: '弓道', reading: 'きゅうどう', romaji: 'kyuudou', meaning: "Kamondan o'q otish me'mori/sporti" },
+                { day: 9, word: '弓矢', reading: 'ゆみや', romaji: 'yumiya', meaning: "Kamon va o'q" },
+                { day: 9, word: '矢', reading: 'や', romaji: 'ya', meaning: "O'q" },
+                { day: 9, word: '矢印', reading: 'やじるし', romaji: 'yajirushi', meaning: "O'q belgisi (yo'nalish)" },
+                { day: 9, word: '無理矢理', reading: 'むりやり', romaji: 'muriyari', meaning: "Majburan" },
+                { day: 9, word: '糸', reading: 'いと', romaji: 'ito', meaning: "Ip" },
+                { day: 9, word: '毛糸', reading: 'けいと', romaji: 'keito', meaning: "Jun ip" },
+
+                // 10-KUN (力, 主, 本, 刀)
+                { day: 10, word: '力', reading: 'ちから', romaji: 'chikara', meaning: "Kuch" },
+                { day: 10, word: '学力', reading: 'がくりょく', romaji: 'gakuryoku', meaning: "Akademik qobiliyat / Bilim" },
+                { day: 10, word: '協力する', reading: 'きょうりょくする', romaji: 'kyouryoku suru', meaning: "Qo'llab-quvvatlash / Hamkorlik qilish" },
+                { day: 10, word: '努力', reading: 'どりょく', romaji: 'doryoku', meaning: "Intilish / Harakat qilish" },
+                { day: 10, word: '力む', reading: 'りきむ', romaji: 'rikimu', meaning: "Kuchanish / Zo'r berish" },
+                { day: 10, word: '主人', reading: 'しゅじん', romaji: 'shujin', meaning: "Usta / Birovning eri / Xo'jayin" },
+                { day: 10, word: '主', reading: 'おも', romaji: 'omo', meaning: "Boshliq / Asosiy" },
+                { day: 10, word: '持ち主', reading: 'もちぬし', romaji: 'mochinushi', meaning: "Egasi" },
+                { day: 10, word: '本', reading: 'ほん', romaji: 'hon', meaning: "Kitob / Asos" },
+                { day: 10, word: '日本', reading: 'にほん', romaji: 'nihon', meaning: "Yaponiya" },
+                { day: 10, word: '山本', reading: 'やまもと', romaji: 'yamamoto', meaning: "Yamamoto (familiya)" },
+                { day: 10, word: '本屋', reading: 'ほんや', romaji: 'honya', meaning: "Kitob do'koni" },
+                { day: 10, word: '一本', reading: 'いっぽん', romaji: 'ippon', meaning: "Bitta (uzun obyektlar uchun)" },
+                { day: 10, word: '刀', reading: 'かたな', romaji: 'katana', meaning: "Qilich" },
+                { day: 10, word: '日本刀', reading: 'にほんとう', romaji: 'nihontou', meaning: "Yapon qilichi" },
+                { day: 10, word: '刀打ち', reading: 'かたなうち', romaji: 'katanauchi', meaning: "Qilichni soqish/urish" },
+
+                // 11-KUN (先, 生, 父, 母)
+                { day: 11, word: '先生', reading: 'せんせい', romaji: 'sensei', meaning: "O'qituvchi" },
+                { day: 11, word: '先月', reading: 'せんげつ', romaji: 'sengetsu', meaning: "O'tgan oy" },
+                { day: 11, word: '先週', reading: 'せんしゅう', romaji: 'senshuu', meaning: "O'tgan hafta" },
+                { day: 11, word: '先に', reading: 'さきに', romaji: 'sakini', meaning: "Oldin / Avval" },
+                { day: 11, word: '学生', reading: 'がくせい', romaji: 'gakusei', meaning: "Talaba" },
+                { day: 11, word: '誕生日', reading: 'たんじょうび', romaji: 'tanjoubi', meaning: "Tug'ilgan kun" },
+                { day: 11, word: '生まれる', reading: 'うまれる', romaji: 'umareru', meaning: "Tug'ilmoq" },
+                { day: 11, word: '生け花', reading: 'いけばな', romaji: 'ikebana', meaning: "Gul aranjirovkasi" },
+                { day: 11, word: '生卵', reading: 'なまたまご', romaji: 'namatamago', meaning: "Xom tuxum" },
+                { day: 11, word: '父', reading: 'ちち', romaji: 'chichi', meaning: "Otam" },
+                { day: 11, word: 'お父さん', reading: 'おとうさん', romaji: 'otousan', meaning: "Otangiz / Dada" },
+                { day: 11, word: '祖父', reading: 'そふ', romaji: 'sofu', meaning: "Bobo" },
+                { day: 11, word: '父の日', reading: 'ちちのひ', romaji: 'chichinohi', meaning: "Otalar kuni" },
+                { day: 11, word: '母', reading: 'はは', romaji: 'haha', meaning: "Mening onam" },
+                { day: 11, word: 'お母さん', reading: 'おかあさん', romaji: 'okaasan', meaning: "Onangiz / Ona" },
+                { day: 11, word: '父母', reading: 'ちちはは', romaji: 'chichihaha', meaning: "Ota-onalar" },
+                { day: 11, word: '母国語', reading: 'ぼこくご', romaji: 'bokokugo', meaning: "Ona tili" },
+
+                // 12-KUN (一, 二, 三, 四)
+                { day: 12, word: '一', reading: 'いち', romaji: 'ichi', meaning: "Bitta / Bir" },
+                { day: 12, word: '一人', reading: 'ひとり', romaji: 'hitori', meaning: "O'zi / Bir o'zi" },
+                { day: 12, word: '一緒に', reading: 'いっしょに', romaji: 'isshoni', meaning: "Birga" },
+                { day: 12, word: '一度', reading: 'いちど', romaji: 'ichido', meaning: "Bir marta" },
+                { day: 12, word: '一日', reading: 'ついたち', romaji: 'tsuitachi', meaning: "Birinchi kun / Bir kun" },
+                { day: 12, word: '二', reading: 'に', romaji: 'ni', meaning: "Ikki" },
+                { day: 12, word: '二つ', reading: 'ふたつ', romaji: 'futatsu', meaning: "Ikkita" },
+                { day: 12, word: '二月', reading: 'にがつ', romaji: 'nigatsu', meaning: "Fevral" },
+                { day: 12, word: '二人', reading: 'ふたり', romaji: 'futari', meaning: "Ikki kishi" },
+                { day: 12, word: '二十日', reading: 'はつか', romaji: 'hatsuka', meaning: "20-kun / Yigirma kun" },
+                { day: 12, word: '三', reading: 'さん', romaji: 'san', meaning: "Uch" },
+                { day: 12, word: '三つ', reading: 'みっつ', romaji: 'mittsu', meaning: "3 ta" },
+                { day: 12, word: '三時', reading: 'さんじ', romaji: 'sanji', meaning: "Soat uch" },
+                { day: 12, word: '三人', reading: 'さんにん', romaji: 'sannin', meaning: "Uch kishi" },
+                { day: 12, word: '三日目', reading: 'みっかめ', romaji: 'mikkame', meaning: "Uchinchi kun" },
+                { day: 12, word: '四', reading: 'よん', romaji: 'yon', meaning: "To'rt" },
+                { day: 12, word: '四つ', reading: 'よっつ', romaji: 'yottsu', meaning: "4 ta" },
+                { day: 12, word: '四時', reading: 'よじ', romaji: 'yoji', meaning: "Soat to'rt" },
+                { day: 12, word: '四月', reading: 'しがつ', romaji: 'shigatsu', meaning: "Aprel" },
+                { day: 12, word: '四日', reading: 'よっか', romaji: 'yokka', meaning: "4-kun" },
+
+                // 13-KUN (五, 六, 七, 八)
+                { day: 13, word: '五', reading: 'ご', romaji: 'go', meaning: "Besh" },
+                { day: 13, word: '五つ', reading: 'いつつ', romaji: 'itsutsu', meaning: "Beshta" },
+                { day: 13, word: '五時', reading: 'ごじ', romaji: 'goji', meaning: "Soat besh" },
+                { day: 13, word: '五月', reading: 'ごがつ', romaji: 'gogatsu', meaning: "May" },
+                { day: 13, word: '五日', reading: 'いつか', romaji: 'itsuka', meaning: "5 kun / 5-kun" },
+                { day: 13, word: '六', reading: 'ろく', romaji: 'roku', meaning: "Olti" },
+                { day: 13, word: '六つ', reading: 'むっつ', romaji: 'muttsu', meaning: "Oltita" },
+                { day: 13, word: '六百', reading: 'ろっぴゃく', romaji: 'roppyaku', meaning: "Olti yuz" },
+                { day: 13, word: '六日', reading: 'むいか', romaji: 'muika', meaning: "Olti kun / 6-kun" },
+                { day: 13, word: '六分', reading: 'ろっぷん', romaji: 'roppun', meaning: "Olti daqiqa" },
+                { day: 13, word: '七', reading: 'なな', romaji: 'nana', meaning: "Yetti" },
+                { day: 13, word: '七つ', reading: 'ななつ', romaji: 'nanatsu', meaning: "Yettita" },
+                { day: 13, word: '七日', reading: 'なのか', romaji: 'nanoka', meaning: "Yetti kun / 7-kun" },
+                { day: 13, word: '七夕', reading: 'たなばた', romaji: 'tanabata', meaning: "Yulduzlar festivali" },
+                { day: 13, word: '七人', reading: 'しちにん', romaji: 'shichinin', meaning: "7 kishi" },
+                { day: 13, word: '八', reading: 'はち', romaji: 'hachi', meaning: "Sakkiz" },
+                { day: 13, word: '八つ', reading: 'やっつ', romaji: 'yattsu', meaning: "Sakkizta" },
+                { day: 13, word: '八百', reading: 'はっぴゃく', romaji: 'happyaku', meaning: "Sakkiz yuz" },
+                { day: 13, word: '八日', reading: 'ようか', romaji: 'youka', meaning: "Sakkiz kun / 8-kun" },
+                { day: 13, word: '八百屋', reading: 'やおや', romaji: 'yaoya', meaning: "Sabzavot do'koni" },
+
+                // 14-KUN (九, 十, 百, 千)
+                { day: 14, word: '九', reading: 'きゅう', romaji: 'kyuu', meaning: "To'qqiz" },
+                { day: 14, word: '九つ', reading: 'ここのつ', romaji: 'kokonotsu', meaning: "To'qqizta" },
+                { day: 14, word: '九時', reading: 'くじ', romaji: 'kuji', meaning: "Soat to'qqiz" },
+                { day: 14, word: '九日', reading: 'ここのか', romaji: 'kokonoka', meaning: "To'qqiz kun / 9-kun" },
+                { day: 14, word: '九州地方', reading: 'きゅうしゅうちほう', romaji: 'kyuushuu chihou', meaning: "Kyushu hududi" },
+                { day: 14, word: '十', reading: 'じゅう', romaji: 'juu', meaning: "O'n" },
+                { day: 14, word: '十日', reading: 'とおか', romaji: 'tooka', meaning: "O'n kun / 10-kun" },
+                { day: 14, word: '十分', reading: 'じゅうぶん', romaji: 'juubun', meaning: "Yetarli" },
+                { day: 14, word: '十歳', reading: 'じゅっさい', romaji: 'jussai', meaning: "O'n yoshda" },
+                { day: 14, word: '百', reading: 'ひゃく', romaji: 'hyaku', meaning: "Yuz" },
+                { day: 14, word: '三百', reading: 'さんびゃく', romaji: 'sanbyaku', meaning: "Uch yuz" },
+                { day: 14, word: '六百', reading: 'ろっぴゃく', romaji: 'roppyaku', meaning: "Olti yuz" },
+                { day: 14, word: '八百', reading: 'はっぴゃく', romaji: 'happyaku', meaning: "Sakkiz yuz" },
+                { day: 14, word: '百貨店', reading: 'ひゃっかてん', romaji: 'hyakkaten', meaning: "Universal do'kon (Univermag)" },
+                { day: 14, word: '千円', reading: 'せんえん', romaji: "sen'en", meaning: "Ming yen" },
+                { day: 14, word: '三千', reading: 'さんぜん', romaji: 'sanzen', meaning: "Uch ming" },
+
+                // 15-KUN (万, 年, 円, 上)
+                { day: 15, word: '一万', reading: 'いちまん', romaji: 'ichiman', meaning: "O'n ming" },
+                { day: 15, word: '十万', reading: 'じゅうまん', romaji: 'juuman', meaning: "Yuz ming" },
+                { day: 15, word: '百万', reading: 'ひゃくまん', romaji: 'hyakuman', meaning: "Bir million" },
+                { day: 15, word: '万能', reading: 'ばんのう', romaji: 'bannou', meaning: "Har tomonlama / Har narsaga qodir" },
+                { day: 15, word: '万引きする', reading: 'まんびきする', romaji: 'manbiki suru', meaning: "Do'konda o'g'rilik qilish" },
+                { day: 15, word: '一年生', reading: 'いちねんせい', romaji: 'ichinensei', meaning: "Birinchi kurs/sinf talabasi" },
+                { day: 15, word: '一年', reading: 'いちねん', romaji: 'ichinen', meaning: "Bir yil" },
+                { day: 15, word: '今年', reading: 'ことし', romaji: 'kotoshi', meaning: "Bu yil" },
+                { day: 15, word: '去年', reading: 'きょねん', romaji: 'kyonen', meaning: "O'tgan yili" },
+                { day: 15, word: '毎年', reading: 'まいとし', romaji: 'maitoshi', meaning: "Har yili" },
+                { day: 15, word: '百円', reading: 'ひゃくえん', romaji: 'hyakuen', meaning: "Yuz yen" },
+                { day: 15, word: '円い', reading: 'まるい', romaji: 'marui', meaning: "Dumaloq" },
+                { day: 15, word: '円安', reading: 'えんやす', romaji: 'enyasu', meaning: "Yena qadrsizlanishi" },
+                { day: 15, word: '円高', reading: 'えんだか', romaji: 'endaka', meaning: "Yena qadri oshishi" },
+                { day: 15, word: '上', reading: 'うえ', romaji: 'ue', meaning: "Yuqori / Ustida" },
+                { day: 15, word: '以上', reading: 'いじょう', romaji: 'ijou', meaning: "Bundan ortiq / ...dan ko'p" },
+                { day: 15, word: '上手な', reading: 'じょうずな', romaji: 'jouzu na', meaning: "Usta / Qobiliyatli" },
+                { day: 15, word: '上着', reading: 'うわぎ', romaji: 'uwagi', meaning: "Ustki kiyim" },
+                { day: 15, word: '上る', reading: 'のぼる', romaji: 'noboru', meaning: "Yuqoriga chiqmoq / Ko'tarilmoq" },
+                // --- 16-KUN KANJILARI ---
+      { day: 16, word: "中", reading: "なか", romaji: "naka", meaning: "O'rta / Ichida" },
+      { day: 16, word: "中国", reading: "ちゅうごく", romaji: "chuugoku", meaning: "Xitoy" },
+      { day: 16, word: "一年中", reading: "いちねんじゅう", romaji: "ichinenjuu", meaning: "Butun yil davomida" },
+      { day: 16, word: "中学校", reading: "ちゅうがっこう", romaji: "chuugakkou", meaning: "O'rta maktab" },
+      { day: 16, word: "途中", reading: "とちゅう", romaji: "tochuu", meaning: "Yo'lda / Yarmida" },
+      { day: 16, word: "五分", reading: "ごふん", romaji: "gofun", meaning: "Besh daqiqa" },
+      { day: 16, word: "十分", reading: "じゅっぷん", romaji: "juppun", meaning: "O'n daqiqa" },
+      { day: 16, word: "半分", reading: "はんぶん", romaji: "hanbun", meaning: "Yarmi" },
+      { day: 16, word: "分かる", reading: "わかる", romaji: "wakaru", meaning: "Tushunmoq" },
+      { day: 16, word: "自分", reading: "じぶん", romaji: "jibun", meaning: "O'zi" },
+      { day: 16, word: "下", reading: "した", romaji: "shita", meaning: "Past / Ostida" },
+      { day: 16, word: "以下", reading: "いか", romaji: "ika", meaning: "Quyida" },
+      { day: 16, word: "地下鉄", reading: "ちかてつ", romaji: "chikatetsu", meaning: "Metro" },
+      { day: 16, word: "下手な", reading: "へたな", romaji: "hetana", meaning: "Uquvsiz / Yomon" },
+      { day: 16, word: "下さい", reading: "ください", romaji: "kudasai", meaning: "Menga bering / Iltimos" },
+      { day: 16, word: "三時半", reading: "さんじはん", romaji: "sanjihan", meaning: "Uch yarim" },
+      { day: 16, word: "半年", reading: "はんとし", romaji: "hantoshi", meaning: "Yarim yil" },
+      { day: 16, word: "半額", reading: "はんがく", romaji: "hangaku", meaning: "Yarim narx" },
+      { day: 16, word: "一月半ば", reading: "いちがつなかば", romaji: "ichigatsu nakaba", meaning: "Yanvar o'rtalarida" },
+
+      // --- 17-KUN KANJILARI ---
+      { day: 17, word: "男の子", reading: "おとこのこ", romaji: "otoko no ko", meaning: "O'g'il bola / Yigit" },
+      { day: 17, word: "男性", reading: "だんせい", romaji: "dansei", meaning: "Erkak" },
+      { day: 17, word: "男の人", reading: "おとこのひと", romaji: "otoko no hito", meaning: "Erkak kishi" },
+      { day: 17, word: "長男", reading: "ちょうなん", romaji: "chounan", meaning: "Katta o'g'il" },
+      { day: 17, word: "男子学生", reading: "だんいがくせい", romaji: "danshigakusei", meaning: "Erkak talaba" },
+      { day: 17, word: "林", reading: "はやし", romaji: "hayashi", meaning: "Kichik o'rmon / Bog'" },
+      { day: 17, word: "小林", reading: "こばやし", romaji: "kobayashi", meaning: "Kobayashi (Yapon familiyasi)" },
+      { day: 17, word: "林業", reading: "りんぎょう", romaji: "ringyou", meaning: "O'rmon xo'jaligi" },
+      { day: 17, word: "森", reading: "もり", romaji: "mori", meaning: "Qalin o'rmon" },
+      { day: 17, word: "森田", reading: "もりた", romaji: "morita", meaning: "Morita (Yapon familiyasi)" },
+      { day: 17, word: "森林", reading: "しんりん", romaji: "shinrin", meaning: "O'rmonlar" },
+      { day: 17, word: "休む", reading: "やすむ", romaji: "yasumu", meaning: "Dam olmoq" },
+      { day: 17, word: "休み", reading: "やすみ", romaji: "yasumi", meaning: "Dam olish / Bayran" },
+      { day: 17, word: "昼休み", reading: "ひるやすみ", romaji: "hiru yasumi", meaning: "Tushlik tanaffusi" },
+      { day: 17, word: "休日", reading: "きゅうじつ", romaji: "kyuujitsu", meaning: "Dam olish kuni" },
+      { day: 17, word: "定休日", reading: "ていきゅうび", romaji: "teikyuubi", meaning: "Dam olish kuni (Do'kon va h.k.)" },
+                { day: 18, word: "体", reading: "からだ", romaji: "karada", meaning: "Tana" },
+      { day: 18, word: "体力", reading: "たいりょく", romaji: "tairyoku", meaning: "Jismoniy kuch" },
+      { day: 18, word: "体操", reading: "たいそう", romaji: "taisou", meaning: "Jismoniy mashqlar / Gimnastika" },
+      { day: 18, word: "大体", reading: "だいたい", romaji: "daitai", meaning: "Taxminan / Umuman" },
+      { day: 18, word: "住む", reading: "すむ", romaji: "sumu", meaning: "Yashamoq" },
+      { day: 18, word: "住所", reading: "じゅうしょ", romaji: "juusho", meaning: "Manzil" },
+      { day: 18, word: "住民", reading: "じゅうみん", romaji: "juumin", meaning: "Aholi" },
+      { day: 18, word: "住宅", reading: "じゅうたく", romaji: "juutaku", meaning: "Uy-joy" },
+      { day: 18, word: "住まい", reading: "すまい", romaji: "sumai", meaning: "Uy / Turar joy" },
+      { day: 18, word: "明るい", reading: "あかるい", romaji: "akarui", meaning: "Yorqin / Yorug'" },
+      { day: 18, word: "明日", reading: "あした", romaji: "ashita", meaning: "Ertaga" },
+      { day: 18, word: "説明", reading: "せつめい", romaji: "setsumei", meaning: "Tushuntirish / Izoh" },
+      { day: 18, word: "明らか", reading: "あきらか", romaji: "akiraka", meaning: "Aniq / Ravshan" },
+      { day: 18, word: "明後日", reading: "あさって", romaji: "asatte", meaning: "Ertangi kun / Indinga" },
+      { day: 18, word: "字", reading: "じ", romaji: "ji", meaning: "Harf / Belgi" },
+      { day: 18, word: "漢字", reading: "かんじ", romaji: "kanji", meaning: "Kanji / Iyeroglif" },
+      { day: 18, word: "数字", reading: "すうじ", romaji: "suuji", meaning: "Raqam / Raqamlar" },
+      { day: 18, word: "名字", reading: "みょうじ", romaji: "myouji", meaning: "Familiya" },
+      { day: 18, word: "ローマ字", reading: "ろーまじ", romaji: "roomaji", meaning: "Rim alifbosi (Romaji)" },
+      { day: 19, word: "学生", reading: "がくせい", romaji: "gakusei", meaning: "Talaba" },
+      { day: 19, word: "学校", reading: "がっこう", romaji: "gakkou", meaning: "Maktab" },
+      { day: 19, word: "学習", reading: "がくしゅう", romaji: "gakushuu", meaning: "O'rganish / Ta'lim" },
+      { day: 19, word: "学ぶ", reading: "まなぶ", romaji: "manabu", meaning: "O'rganmoq" },
+      { day: 19, word: "理学療法士", reading: "りがくりょうほうし", romaji: "rigakuryouhoushi", meaning: "Fizioterapevt" },
+      { day: 19, word: "安い", reading: "やすい", romaji: "yasui", meaning: "Arzon" },
+      { day: 19, word: "安心する", reading: "あんしんする", romaji: "anshin suru", meaning: "Yengil tortmoq / Tinchlanmoq" },
+      { day: 19, word: "安全", reading: "あんぜん", romaji: "anzen", meaning: "Xavfsizlik" },
+      { day: 19, word: "不安な", reading: "ふあんな", romaji: "fuan na", meaning: "Xavotirli / Behalovat" },
+      { day: 19, word: "好きな", reading: "すきな", romaji: "suki na", meaning: "Sevimli / Yoqimli" },
+      { day: 19, word: "好み", reading: "このみ", romaji: "konomi", meaning: "Tanlov / Did / Yoqtirish" },
+      { day: 19, word: "お好み焼き", reading: "お好み焼き", romaji: "okonomiyaki", meaning: "Yapon bobi/ortiqcha taomi (Okonomiyaki)" },
+      { day: 19, word: "毎日", reading: "まいにち", romaji: "mainichi", meaning: "Har kuni" },
+      { day: 19, word: "毎晩", reading: "まいばん", romaji: "maiban", meaning: "Har kecha" },
+      { day: 19, word: "毎年", reading: "まいとし / まいねん", romaji: "maitoshi / meinen", meaning: "Har yili" },
+      { day: 19, word: "三日毎", reading: "みっかごと", romaji: "mikkagoto", meaning: "Har 3 kunda" }
+            ],
+            n5_vocab: [
+  // --- 1-KUN LUG'ATI (1-qism) ---
+  // --- 1-KUN LUG'ATI ---
+{ day: 1, word: "わたし", romaji: "watashi", meaning: "Men" },
+{ day: 1, word: "あなた", romaji: "anata", meaning: "Sen" },
+{ day: 1, word: "みなさん", romaji: "minasan", meaning: "Hamma, barcha" },
+{ day: 1, word: "あのひと", romaji: "ano hito", meaning: "U kishi" },
+{ day: 1, word: "〜さん", romaji: "-san", meaning: "Janob / Xonim" },
+{ day: 1, word: "〜じん", romaji: "-jin", meaning: "~lik (millat suffiksi)" },
+{ day: 1, word: "〜さい", romaji: "-sai", meaning: "~ yosh" },
+{ day: 1, word: "なまえ", romaji: "namae", meaning: "Ism" },
+{ day: 1, word: "いしゃ", romaji: "isha", meaning: "Shifokor" },
+{ day: 1, word: "かいしゃいん", romaji: "kaishain", meaning: "Kompaniya xodimi / Ishchi" },
+{ day: 1, word: "がくせい", romaji: "gakusei", meaning: "Talaba" },
+{ day: 1, word: "ぎんこういん", romaji: "ginkouin", meaning: "Bank xodimi" },
+{ day: 1, word: "けんきゅうしゃ", romaji: "kenkyuusha", meaning: "Tadqiqotchi" },
+{ day: 1, word: "しゃいん", romaji: "shain", meaning: "Xodim" },
+{ day: 1, word: "せんせい", romaji: "sensei", meaning: "Oʻqituvchi" },
+{ day: 1, word: "カンパニー", romaji: "kanpanii", meaning: "Kompaniya" },
+{ day: 1, word: "クラス", romaji: "kurasu", meaning: "Sinf" },
+{ day: 1, word: "だいがく", romaji: "daigaku", meaning: "Universitet" },
+{ day: 1, word: "びょういん", romaji: "byouin", meaning: "Shifoxona" },
+{ day: 1, word: "じむしつ", romaji: "jimushitsu", meaning: "Idora, ofis" },
+{ day: 1, word: "〜かい", romaji: "-kai", meaning: "-qavat" },
+{ day: 1, word: "ごぜん", romaji: "gozen", meaning: "Ertalabki vaqt" },
+{ day: 1, word: "ごご", romaji: "gogo", meaning: "Tushdan soʻnggi vaqt" },
+{ day: 1, word: "にほんご", romaji: "nihongo", meaning: "Yapon tili" },
+{ day: 1, word: "アメリカ", romaji: "amerika", meaning: "Amerika" },
+{ day: 1, word: "かんこく", romaji: "kankoku", meaning: "Janubiy Koreya" },
+{ day: 1, word: "ソウル", romaji: "souru", meaning: "Seul" },
+{ day: 1, word: "ちゅうごく", romaji: "chuugoku", meaning: "Xitoy" },
+{ day: 1, word: "ペキン", romaji: "pekin", meaning: "Pekin" },
+{ day: 1, word: "にほん", romaji: "nihon", meaning: "Yaponiya" },
+{ day: 1, word: "フィリピン", romaji: "firipin", meaning: "Filippin" },
+{ day: 1, word: "マニラ", romaji: "manira", meaning: "Manila" },
+{ day: 1, word: "ベトナム", romaji: "betonamu", meaning: "Vyetnam" },
+{ day: 1, word: "ハノイ", romaji: "hanoi", meaning: "Xanoy" },
+{ day: 1, word: "ミャンマー", romaji: "myanmaa", meaning: "Myanma" },
+{ day: 1, word: "ヤンゴン", romaji: "yangon", meaning: "Yangon" },
+{ day: 1, word: "イギリス", romaji: "igirisu", meaning: "Angliya" },
+{ day: 1, word: "ロンドン", romaji: "rondon", meaning: "London" },
+{ day: 1, word: "はじめまして", romaji: "hajimemashite", meaning: "Oʻzimni tanishtirishga ruxsat bersangiz" },
+{ day: 1, word: "どうぞ、よろしくおねがいします", romaji: "douzo, yoroshiku onegaishimasu", meaning: "Tanishganimdan memnunman" },
+{ day: 1, word: "しつれいですが", romaji: "shitsurei desu ga", meaning: "Kechirasiz,~" },
+{ day: 1, word: "〜からきました", romaji: "~ kara kimashita", meaning: "~dan kelganman" },
+{ day: 1, word: "はい", romaji: "hai", meaning: "Ha" },
+{ day: 1, word: "いいえ", romaji: "iie", meaning: "Yoʻq" },
+{ day: 1, word: "だれ", romaji: "dare", meaning: "Kim" },
+{ day: 1, word: "なんさい", romaji: "nansai", meaning: "Necha yosh" },
+{ day: 1, word: "おいくつ", romaji: "oikutsu", meaning: "Yoshiniz nechida? (Hurmat shakli)" },
+{ day: 1, word: "おなまえは？", romaji: "onamae wa?", meaning: "Ismingiz nima?" },
+{ day: 1, word: "れんしゅう", romaji: "renshuu", meaning: "Mashq" },
+{ day: 1, word: "れい", romaji: "rei", meaning: "Namuna" },
+{ day: 1, word: "じこしょうかいしましょう", romaji: "jikoshoukai shimashou", meaning: "Keling, oʻzimizni tanishtiraylik" },
+{ day: 1, word: "ペアではなしましょう", romaji: "pea de hanashimashou", meaning: "2 kishi boʻlib gaplashaylik" },
+
+// --- 2-KUN LUG'ATI ---
+{ day: 2, word: "これ", romaji: "kore", meaning: "bu" },
+{ day: 2, word: "それ", romaji: "sore", meaning: "u" },
+{ day: 2, word: "あれ", romaji: "are", meaning: "ana u" },
+{ day: 2, word: "ほん", romaji: "hon", meaning: "kitob" },
+{ day: 2, word: "じしょ", romaji: "jisho", meaning: "lugʻat" },
+{ day: 2, word: "しんぶん", romaji: "shinbun", meaning: "gazeta" },
+{ day: 2, word: "めいし", romaji: "meishi", meaning: "tashrif qogʻozi" },
+{ day: 2, word: "ざっし", romaji: "zasshi", meaning: "jurnal" },
+{ day: 2, word: "ノート", romaji: "nooto", meaning: "daftar" },
+{ day: 2, word: "カード", romaji: "kaado", meaning: "karta" },
+{ day: 2, word: "えんぴつ", romaji: "enpitsu", meaning: "qalam" },
+{ day: 2, word: "ボールペン", romaji: "boorupen", meaning: "ruchka" },
+{ day: 2, word: "シャープペンシル", romaji: "shaapu penshiru", meaning: "avto qalam" },
+{ day: 2, word: "かぎ", romaji: "kagi", meaning: "kalit" },
+{ day: 2, word: "かさ", romaji: "kasa", meaning: "soyabon" },
+{ day: 2, word: "とけい", romaji: "tokei", meaning: "soat" },
+{ day: 2, word: "かばん", romaji: "kaban", meaning: "sumka" },
+{ day: 2, word: "テレビ", romaji: "terebi", meaning: "televizor" },
+{ day: 2, word: "カメラ", romaji: "kamera", meaning: "kamera" },
+{ day: 2, word: "けいたいでんわ", romaji: "keitai denwa", meaning: "mobil telefon" },
+{ day: 2, word: "パソコン", romaji: "pasokon", meaning: "kompyuter" },
+{ day: 2, word: "じどうしゃ / くるま", romaji: "jidousha / kuruma", meaning: "avtomobil / mashina" },
+{ day: 2, word: "つくえ", romaji: "tsukue", meaning: "stol" },
+{ day: 2, word: "いす", romaji: "isu", meaning: "stul" },
+{ day: 2, word: "チョコレート", romaji: "chokoreeto", meaning: "shokolad" },
+{ day: 2, word: "コーヒー", romaji: "koohii", meaning: "qahva" },
+{ day: 2, word: "えいご", romaji: "eigo", meaning: "ingliz tili" },
+{ day: 2, word: "にほんご", romaji: "nihongo", meaning: "yapon tili" },
+{ day: 2, word: "〜ご", romaji: "-go", meaning: "~ tili" },
+{ day: 2, word: "うち", romaji: "uchi", meaning: "uy" },
+{ day: 2, word: "タイご", romaji: "taigo", meaning: "Tay tili" },
+{ day: 2, word: "おみやげ", romaji: "omiyage", meaning: "sovgʻa" },
+{ day: 2, word: "ブラジル", romaji: "burajiru", meaning: "Braziliya" },
+{ day: 2, word: "この", romaji: "kono", meaning: "bu" },
+{ day: 2, word: "その", romaji: "sono", meaning: "u" },
+{ day: 2, word: "あの", romaji: "ano", meaning: "Ana u" },
+{ day: 2, word: "なん / なに", romaji: "nan / nani", meaning: "nima" },
+
+// --- 3-KUN LUG'ATI ---
+{ day: 3, word: "ここ", romaji: "koko", meaning: "bu yer" },
+{ day: 3, word: "そこ", romaji: "soko", meaning: "u yer" },
+{ day: 3, word: "あそこ", romaji: "asoko", meaning: "ana u yer" },
+{ day: 3, word: "こちら", romaji: "kochira", meaning: "bu yer (hurmat)" },
+{ day: 3, word: "そちら", romaji: "sochira", meaning: "u yer (hurmat)" },
+{ day: 3, word: "あちら", romaji: "achira", meaning: "ana u yer (hurmat)" },
+{ day: 3, word: "じしゅうしつ", romaji: "jishuushitsu", meaning: "mustaqil oʻrganish xonasi" },
+{ day: 3, word: "きょうしつ", romaji: "kyoushitsu", meaning: "sinfxona" },
+{ day: 3, word: "しょくどう", romaji: "shokudou", meaning: "oshxona" },
+{ day: 3, word: "がっこう", romaji: "gakkou", meaning: "maktab" },
+{ day: 3, word: "うけつけ", romaji: "uketsuke", meaning: "qabulxona" },
+{ day: 3, word: "ロビー", romaji: "robii", meaning: "dahliz (lobbi)" },
+{ day: 3, word: "へや", romaji: "heya", meaning: "xona" },
+{ day: 3, word: "トイレ", romaji: "toire", meaning: "hojatxona" },
+{ day: 3, word: "かいだん", romaji: "kaidan", meaning: "zinapoya" },
+{ day: 3, word: "エレベーター", romaji: "erebeetaa", meaning: "lift" },
+{ day: 3, word: "エスカレーター", romaji: "esukareetaa", meaning: "eskalator" },
+{ day: 3, word: "かいしゃ", romaji: "kaisha", meaning: "kompaniya, firma" },
+{ day: 3, word: "うりば", romaji: "uriba", meaning: "sotuv rastasi" },
+{ day: 3, word: "ちか", romaji: "chika", meaning: "yerosti" },
+{ day: 3, word: "デパート", romaji: "depaato", meaning: "buyumlar doʻkoni" },
+{ day: 3, word: "ぎんこう", romaji: "ginkou", meaning: "bank" },
+{ day: 3, word: "ゆうびんきょく", romaji: "yuubinkyoku", meaning: "pochta boʻlimi" },
+{ day: 3, word: "としょかん", romaji: "toshokan", meaning: "kutubxona" },
+{ day: 3, word: "びじゅつかん", romaji: "bijutsukan", meaning: "san'at muzeyi" },
+{ day: 3, word: "びよういん", romaji: "biyouin", meaning: "goʻzallik saloni" },
+{ day: 3, word: "りょう", romaji: "ryou", meaning: "yotoqxona" },
+{ day: 3, word: "じむしょ", romaji: "jimusho", meaning: "ofis" },
+{ day: 3, word: "(お)くに", romaji: "(o)kuni", meaning: "davlat, mamlakat" },
+{ day: 3, word: "インドネシア", romaji: "indoneshia", meaning: "Indoneziya" },
+{ day: 3, word: "ジャカルタ", romaji: "jakaruta", meaning: "Jakarta" },
+{ day: 3, word: "おとこのひと", romaji: "otoko no hito", meaning: "erkak kishi" },
+{ day: 3, word: "おんなのひと", romaji: "onna no hito", meaning: "ayol kishi" },
+{ day: 3, word: "でんわ", romaji: "denwa", meaning: "telefon" },
+{ day: 3, word: "コピーき", romaji: "kopiiki", meaning: "kserokopiya mashinasi" },
+{ day: 3, word: "じどうはんばいき", romaji: "jidouhanbaiki", meaning: "avtomatik sotuvchim." },
+{ day: 3, word: "(どうも) ありがとうございます", romaji: "(doumo) arigatou gozaimasu", meaning: "Rahmat / Katta rahmat" },
+{ day: 3, word: "ちがいます", romaji: "chigaimasu", meaning: "xato, notoʻgʻri" },
+{ day: 3, word: "そうです", romaji: "sou desu", meaning: "Toʻgʻri, shunday" },
+{ day: 3, word: "そうですか", romaji: "sou desu ka", meaning: "Shundaymi?" },
+{ day: 3, word: "あのう", romaji: "anou", meaning: "Hmmm..., haligi" },
+{ day: 3, word: "どうぞ", romaji: "douzo", meaning: "marhamat" },
+{ day: 3, word: "どこ", romaji: "doko", meaning: "Qayer?" },
+{ day: 3, word: "どちら", romaji: "dochira", meaning: "Qaysi tomon?" },
+{ day: 3, word: "なんかい", romaji: "nankai", meaning: "nechi qavat?" },
+
+// --- 4-KUN LUG'ATI ---
+{ day: 4, word: "みせ", romaji: "mise", meaning: "doʻkon" },
+{ day: 4, word: "くつ", romaji: "kutsu", meaning: "oyoq kiyim" },
+{ day: 4, word: "ネクタイ", romaji: "nekutai", meaning: "galstuk" },
+{ day: 4, word: "ワイン", romaji: "wain", meaning: "vino" },
+{ day: 4, word: "たばこ", romaji: "tabako", meaning: "sigaret" },
+{ day: 4, word: "べんとう", romaji: "bentou", meaning: "bento" },
+{ day: 4, word: "ハンバーガー", romaji: "hanbaagaa", meaning: "gamburger" },
+{ day: 4, word: "クッキー", romaji: "kukkii", meaning: "pechenye" },
+{ day: 4, word: "フリーマーケット", romaji: "furiimaaketto", meaning: "bepul bozor" },
+{ day: 4, word: "〜えん", romaji: "-en", meaning: "yen" },
+{ day: 4, word: "ひゃく", romaji: "hyaku", meaning: "yuz" },
+{ day: 4, word: "せん", romaji: "sen", meaning: "ming" },
+{ day: 4, word: "まん", romaji: "man", meaning: "oʻn ming" },
+{ day: 4, word: "〜をみせてください", romaji: "~ o misete kudasai", meaning: "Iltimos, ~ ni koʻrsating" },
+{ day: 4, word: "いくら", romaji: "ikura", meaning: "qancha, necha pul" },
+
+// --- 5-KUN LUG'ATI ---
+{ day: 5, word: "ばんごうあんない", romaji: "bangou annai", meaning: "ma'lumot xizmati" },
+{ day: 5, word: "でんわばんごう", romaji: "denwa bangou", meaning: "telefon raqami" },
+{ day: 5, word: "テスト", romaji: "tesuto", meaning: "test" },
+{ day: 5, word: "いま", romaji: "ima", meaning: "hozir" },
+{ day: 5, word: "〜じ", romaji: "-ji", meaning: "soat ~" },
+{ day: 5, word: "〜ふん / 〜ぷん", romaji: "-fun / -pun", meaning: "~ daqiqa" },
+{ day: 5, word: "はん", romaji: "han", meaning: "yarim" },
+{ day: 5, word: "あさ", romaji: "asa", meaning: "ertalab" },
+{ day: 5, word: "ひる", romaji: "hiru", meaning: "kunduzi" },
+{ day: 5, word: "よる", romaji: "yoru", meaning: "kechqurun" },
+{ day: 5, word: "やすみ", romaji: "yasumi", meaning: "dam olish" },
+{ day: 5, word: "ひるやすみ", romaji: "hiru yasumi", meaning: "tushlik vaqti" },
+{ day: 5, word: "げつようび", romaji: "getsuyoubi", meaning: "Dushanba" },
+{ day: 5, word: "かようび", romaji: "kayoubi", meaning: "Seshanba" },
+{ day: 5, word: "すいようび", romaji: "suiyoubi", meaning: "Chorshanba" },
+{ day: 5, word: "もくようび", romaji: "mokuyoubi", meaning: "Payshanba" },
+{ day: 5, word: "きんようび", romaji: "kinyoubi", meaning: "Juma" },
+{ day: 5, word: "どようび", romaji: "doyoubi", meaning: "Shanba" },
+{ day: 5, word: "にちようび", romaji: "nichiyoubi", meaning: "Yakshanba" },
+{ day: 5, word: "なんようび", romaji: "nanyoubi", meaning: "Qaysi kun?" },
+{ day: 5, word: "そちら", romaji: "sochira", meaning: "u yer" },
+{ day: 5, word: "パーティー", romaji: "paatii", meaning: "bazm" },
+{ day: 5, word: "しけん", romaji: "shiken", meaning: "imtihon" },
+{ day: 5, word: "〜じかんめ", romaji: "-jikanme", meaning: "~ dars" },
+{ day: 5, word: "レストラン", romaji: "resutoran", meaning: "restoran" },
+{ day: 5, word: "スーパー", romaji: "suupaa", meaning: "supermarket" },
+{ day: 5, word: "おねがいします", romaji: "onegaishimasu", meaning: "Iltimos" },
+{ day: 5, word: "ありがとうございました", romaji: "arigatou gozaimashita", meaning: "Katta rahmat" },
+{ day: 5, word: "おめでとうございます", romaji: "omedetou gozaimasu", meaning: "Tabriklayman" },
+{ day: 5, word: "もしもし", romaji: "moshimoshi", meaning: "Alo?" },
+{ day: 5, word: "〜から", romaji: "-kara", meaning: "~ dan" },
+{ day: 5, word: "〜まで", romaji: "-made", meaning: "~ gacha" },
+{ day: 5, word: "〜と〜", romaji: "-to-", meaning: "~ va ~" },
+{ day: 5, word: "なんじ", romaji: "nanji", meaning: "Soat nechchi?" },
+{ day: 5, word: "なんぷん", romaji: "nanpun", meaning: "Necha daqiqa?" },
+
+// --- 6-KUN LUG'ATI ---
+{ day: 6, word: "おきます", romaji: "okimasu", meaning: "uygʻonmoq / turmoq" },
+{ day: 6, word: "ねます", romaji: "nemasu", meaning: "uxlamoq" },
+{ day: 6, word: "はたらきます", romaji: "hatarakimasu", meaning: "ishlamoq" },
+{ day: 6, word: "やすみます", romaji: "yasumimasu", meaning: "dam olmoq" },
+{ day: 6, word: "べんきょうします", romaji: "benkyou shimasu", meaning: "dars qilmoq" },
+{ day: 6, word: "おわります", romaji: "owarimasu", meaning: "tugamoq / yakunlamoq" },
+{ day: 6, word: "たいへん (な)", romaji: "taihen (na)", meaning: "qiyin / ogʻir" },
+{ day: 6, word: "おととい", romaji: "ototoi", meaning: "avvalgi kun" },
+{ day: 6, word: "きのう", romaji: "kinou", meaning: "kecha" },
+{ day: 6, word: "きょう", romaji: "kyou", meaning: "bugun" },
+{ day: 6, word: "あした", romaji: "ashita", meaning: "ertaga" },
+{ day: 6, word: "あさって", romaji: "asatte", meaning: "indinga" },
+{ day: 6, word: "けさ", romaji: "kesa", meaning: "bugun ertalab" },
+{ day: 6, word: "こんばん", romaji: "konban", meaning: "bugun kechqurun" },
+{ day: 6, word: "まいあさ", romaji: "maiasa", meaning: "har kuni ertalab" },
+{ day: 6, word: "まいばん", romaji: "maiban", meaning: "har kuni kechqurun" },
+{ day: 6, word: "まいにち", romaji: "mainichi", meaning: "har kuni" },
+{ day: 6, word: "たいへんですね", romaji: "taihen desu ne", meaning: "Qiyin ekan" },
+
+// --- 7-KUN LUG'ATI ---
+{ day: 7, word: "くうこう", romaji: "kuukou", meaning: "aeroport" },
+{ day: 7, word: "つぎの", romaji: "tsugi no", meaning: "Keyingi" },
+{ day: 7, word: "なんがつ", romaji: "nangatsu", meaning: "Qaysi oy?" },
+{ day: 7, word: "なんにち", romaji: "nannichi", meaning: "Qaysi kun?" },
+{ day: 7, word: "いつ", romaji: "itsu", meaning: "Qachon" },
+{ day: 7, word: "いきます", romaji: "ikimasu", meaning: "Bormoq" },
+{ day: 7, word: "きます", romaji: "kimasu", meaning: "Kelmoq" },
+{ day: 7, word: "かえります", romaji: "kaerimasu", meaning: "Qaytmoq" },
+{ day: 7, word: "スーパー", romaji: "suupaa", meaning: "Supermarket" },
+{ day: 7, word: "えき", romaji: "eki", meaning: "Vokzal" },
+{ day: 7, word: "ひこうき", romaji: "hikouki", meaning: "Samolyot" },
+{ day: 7, word: "ふね", romaji: "fune", meaning: "Kema" },
+{ day: 7, word: "バス", romaji: "basu", meaning: "Avtobus" },
+{ day: 7, word: "ちかてつ", romaji: "chikatetsu", meaning: "Metro" },
+{ day: 7, word: "でんしゃ", romaji: "densha", meaning: "Poyezd" },
+{ day: 7, word: "タクシー", romaji: "takushii", meaning: "Taksi" },
+{ day: 7, word: "じてんしゃ", romaji: "jitensha", meaning: "Velosiped" },
+{ day: 7, word: "あるいて", romaji: "aruite", meaning: "Piyoda" },
+{ day: 7, word: "ひと", romaji: "hito", meaning: "Inson" },
+{ day: 7, word: "ともだち", romaji: "tomodachi", meaning: "Do'st" },
+{ day: 7, word: "かれ", romaji: "kare", meaning: "U (o'g'il bolalar uchun)" },
+{ day: 7, word: "かのじょ", romaji: "kanojo", meaning: "U (qizlar uchun)" },
+{ day: 7, word: "かぞく", romaji: "kazoku", meaning: "Oila" },
+{ day: 7, word: "ひとり で", romaji: "hitori de", meaning: "Yolg'iz" },
+{ day: 7, word: "せんしゅう", romaji: "senshuu", meaning: "O'tgan hafta" },
+{ day: 7, word: "こんしゅう", romaji: "konshuu", meaning: "Bu hafta" },
+{ day: 7, word: "らいしゅう", romaji: "raishuu", meaning: "Keyingi hafta" },
+{ day: 7, word: "せんげつ", romaji: "sengetsu", meaning: "O'tgan oy" },
+{ day: 7, word: "こんげつ", romaji: "kongetsu", meaning: "Bu oy" },
+{ day: 7, word: "らいげつ", romaji: "raigetsu", meaning: "Keyingi oy" },
+{ day: 7, word: "きょねん", romaji: "kyonen", meaning: "O'tgan yili" },
+{ day: 7, word: "ことし", romaji: "kotoshi", meaning: "Bu yil" },
+{ day: 7, word: "らいねん", romaji: "rainen", meaning: "Keyingi yil" },
+{ day: 7, word: "たんじょうび", romaji: "tanjoubi", meaning: "Tug'ilgan kun" },
+{ day: 7, word: "コンビニ", romaji: "konbini", meaning: "Do'kon" },
+
+// --- 8-KUN LUG'ATI ---
+{ day: 8, word: "たべます", romaji: "tabemasu", meaning: "Yemoq" },
+{ day: 8, word: "のみます", romaji: "nomimasu", meaning: "Ichmoq" },
+{ day: 8, word: "すいます", romaji: "suimasu", meaning: "Chekmoq (sigaret)" },
+{ day: 8, word: "みます", romaji: "mimasu", meaning: "Ko'rmoq" },
+{ day: 8, word: "ききます", romaji: "kikimasu", meaning: "Eshitmoq" },
+{ day: 8, word: "よみます", romaji: "yomimasu", meaning: "O'qimoq" },
+{ day: 8, word: "かきます", romaji: "kakimasu", meaning: "Yozmoq" },
+{ day: 8, word: "かいます", romaji: "kaimasu", meaning: "Sotib olmoq" },
+{ day: 8, word: "(しゃしんを) とります", romaji: "(shashin o) torimasu", meaning: "Olmoq (fotosuratga olmoq)" },
+{ day: 8, word: "します", romaji: "shimasu", meaning: "Qilmoq, bajarmoq" },
+{ day: 8, word: "(ともだちに) あいます", romaji: "(tomodachi ni) aimasu", meaning: "Uchratmoq (do'stini uchratmoq)" },
+{ day: 8, word: "ごはん", romaji: "gohan", meaning: "Ovqat; guruch" },
+{ day: 8, word: "あさごはん", romaji: "asagohan", meaning: "Nonushta" },
+{ day: 8, word: "ひるごはん", romaji: "hirugohan", meaning: "Tushlik" },
+{ day: 8, word: "ばんごはん", romaji: "bangohan", meaning: "Kechki ovqat" },
+{ day: 8, word: "パン", romaji: "pan", meaning: "Non" },
+{ day: 8, word: "たまご", romaji: "tamago", meaning: "Tuxum" },
+{ day: 8, word: "にく", romaji: "niku", meaning: "Go'sht" },
+{ day: 8, word: "さかな", romaji: "sakana", meaning: "Baliq" },
+{ day: 8, word: "やさい", romaji: "yasai", meaning: "Sabzavot" },
+{ day: 8, word: "くだもの", romaji: "kudamono", meaning: "Meva" },
+{ day: 8, word: "みず", romaji: "mizu", meaning: "Suv" },
+{ day: 8, word: "おちゃ", romaji: "ocha", meaning: "Choy, yashil choy" },
+{ day: 8, word: "こうちゃ", romaji: "koucha", meaning: "Qora choy" },
+{ day: 8, word: "ぎゅうにゅう", romaji: "gyuunyuu", meaning: "Sut" },
+{ day: 8, word: "ミルク", romaji: "miruku", meaning: "Sut" },
+{ day: 8, word: "ジュース", romaji: "juusu", meaning: "Sharbat" },
+{ day: 8, word: "ビール", romaji: "biiru", meaning: "Pivo" },
+{ day: 8, word: "(お) さけ", romaji: "(o) sake", meaning: "Sake - yapon arog'i" },
+{ day: 8, word: "DVD", romaji: "diibuideii", meaning: "DVD" },
+{ day: 8, word: "えいが", romaji: "eiga", meaning: "Kino" },
+{ day: 8, word: "おんがく", romaji: "ongaku", meaning: "Musiqa" },
+{ day: 8, word: "CD", romaji: "shiidii", meaning: "CD" },
+{ day: 8, word: "てがみ", romaji: "tegami", meaning: "Xat" },
+{ day: 8, word: "しゃしん", romaji: "shashin", meaning: "Rasm" },
+{ day: 8, word: "レストラン", romaji: "resutoran", meaning: "Restoran" },
+{ day: 8, word: "しゅくだい", romaji: "shukudai", meaning: "Uy vazifasi" },
+{ day: 8, word: "テニス", romaji: "tenisu", meaning: "Tennis" },
+{ day: 8, word: "サッカー", romaji: "sakkaa", meaning: "Fudbol" },
+{ day: 8, word: "(お) はなみ", romaji: "(o) hanami", meaning: "Gullagan Sakura daraxtini tomosha qilish" },
+{ day: 8, word: "うみ", romaji: "umi", meaning: "Dengiz" },
+{ day: 8, word: "いざかや", romaji: "izakaya", meaning: "Izakaya" },
+{ day: 8, word: "こうえん", romaji: "kouen", meaning: "Xiyobon" },
+{ day: 8, word: "あきはばら", romaji: "akihabara", meaning: "Akihabara" },
+{ day: 8, word: "なに〜もない", romaji: "nani ~ mo nai", meaning: "Hech narsa yo'q" },
+{ day: 8, word: "いつも", romaji: "itsumo", meaning: "Har safar" },
+{ day: 8, word: "ときとき", romaji: "tokidoki", meaning: "Ba'zan" },
+{ day: 8, word: "それから", romaji: "sorekara", meaning: "Undan keyin" },
+{ day: 8, word: "なにか", romaji: "nanika", meaning: "Nimadir" },
+{ day: 8, word: "なに", romaji: "nani", meaning: "Nima" },
+
+// --- 9-KUN LUG'ATI ---
+{ day: 9, word: "あげます", romaji: "agemasu", meaning: "bermoq" },
+{ day: 9, word: "もらいます", romaji: "moraimasu", meaning: "olmoq" },
+{ day: 9, word: "かします", romaji: "kashimasu", meaning: "qarzga bermoq, berib turmoq" },
+{ day: 9, word: "かります", romaji: "karimasu", meaning: "qarzga olmoq, olib turmoq" },
+{ day: 9, word: "おしえます", romaji: "oshiemasu", meaning: "o'rgatmoq" },
+{ day: 9, word: "ならいます", romaji: "naraimasu", meaning: "o'rganmoq" },
+{ day: 9, word: "おくります", romaji: "okurimasu", meaning: "jo'natmoq" },
+{ day: 9, word: "(でんわを) かけます", romaji: "(denwa o) kakemasu", meaning: "telefon qilmoq" },
+{ day: 9, word: "はな", romaji: "hana", meaning: "gul" },
+{ day: 9, word: "シャツ", romaji: "shatsu", meaning: "ko'ylak" },
+{ day: 9, word: "プレゼント", romaji: "purezento", meaning: "sovg'a" },
+{ day: 9, word: "おかね", romaji: "okane", meaning: "pul" },
+{ day: 9, word: "クリスマス", romaji: "kurisumasu", meaning: "Rojdestvo" },
+{ day: 9, word: "ちち", romaji: "chichi", meaning: "(mening) otam" },
+{ day: 9, word: "はは", romaji: "haha", meaning: "(mening) onam" },
+{ day: 9, word: "おとうさん", romaji: "otousan", meaning: "(birovning) otasi" },
+{ day: 9, word: "おかあさん", romaji: "okaasan", meaning: "(birovning) onasi" },
+{ day: 9, word: "りょこう", romaji: "ryokou", meaning: "sayohat" },
+{ day: 9, word: "おみやげ", romaji: "omiyage", meaning: "suvenir" },
+{ day: 9, word: "メール", romaji: "meeru", meaning: "elektron pochta" },
+{ day: 9, word: "ケーキ", romaji: "keeki", meaning: "tort, pirog" },
+{ day: 9, word: "すてきですね", romaji: "suteki desu ne", meaning: "ajoyib ekan" },
+
+// --- 10-KUN LUG'ATI ---
+{ day: 10, word: "きります", romaji: "kirimasu", meaning: "Kesmoq" },
+{ day: 10, word: "わかりました", romaji: "wakarimashita", meaning: "Men tushundim" },
+{ day: 10, word: "て", romaji: "te", meaning: "qo'l" },
+{ day: 10, word: "はし", romaji: "hashi", meaning: "Ovqatlanish uchun ishlatiladigan cho'p" },
+{ day: 10, word: "スプーン", romaji: "supuun", meaning: "Qoshiq" },
+{ day: 10, word: "フォーク", romaji: "fooku", meaning: "Sanchqi" },
+{ day: 10, word: "ナイフ", romaji: "naifu", meaning: "Pichoq" },
+{ day: 10, word: "はさみ", romaji: "hasami", meaning: "Qaychi" },
+{ day: 10, word: "ホッチキス", romaji: "hotchikisu", meaning: "Stapler" },
+{ day: 10, word: "セロテープ", romaji: "seroteepu", meaning: "skotch" },
+{ day: 10, word: "けしごむ", romaji: "keshigomu", meaning: "O'chirgich" },
+{ day: 10, word: "かみ", romaji: "kami", meaning: "Qog'oz" },
+{ day: 10, word: "にもつ", romaji: "nimotsu", meaning: "Yuk" },
+{ day: 10, word: "きっぷ", romaji: "kippu", meaning: "Chipta" },
+{ day: 10, word: "レポート", romaji: "repooto", meaning: "Hisobot" },
+{ day: 10, word: "いっしょに", romaji: "isshoni", meaning: "Birga" },
+{ day: 10, word: "ちょっと", romaji: "chotto", meaning: "bir oz" },
+{ day: 10, word: "いいですね", romaji: "ii desu ne", meaning: "yaxshiku" },
+{ day: 10, word: "もう", romaji: "mou", meaning: "Allaqachon" },
+{ day: 10, word: "まだまだ", romaji: "madamada", meaning: "hali emas" },
+{ day: 10, word: "これから", romaji: "korekara", meaning: "bundan buyon, endi" },
+{ day: 10, word: "げんきです", romaji: "genki desu", meaning: "yaxshi; sog'lom" },
+
+// --- 11-KUN LUG'ATI ---
+{ day: 11, word: "ハンサム (な)", romaji: "hansamu (na)", meaning: "Kelishgan (erkaklarga nisbatan)" },
+{ day: 11, word: "きれい (な)", romaji: "kirei (na)", meaning: "chiroyli; toza" },
+{ day: 11, word: "しんせつ (な)", romaji: "shinsetsu (na)", meaning: "Mehribon" },
+{ day: 11, word: "げんき (な)", romaji: "genki (na)", meaning: "Baquvvat" },
+{ day: 11, word: "ひま (な)", romaji: "hima (na)", meaning: "band emas;" },
+{ day: 11, word: "すてき (な)", romaji: "suteki (na)", meaning: "ajoyib; yaxshi" },
+{ day: 11, word: "いい (よい)", romaji: "ii (yoi)", meaning: "Yaxshi" },
+{ day: 11, word: "わるい", romaji: "warui", meaning: "Yomon" },
+{ day: 11, word: "あつい", romaji: "atsui", meaning: "Issiq" },
+{ day: 11, word: "さむい", romaji: "samui", meaning: "sovuq (ob-havo)" },
+{ day: 11, word: "つめたい", romaji: "tsumetai", meaning: "sovuq (narsalar, odamlar)" },
+{ day: 11, word: "むずかしい", romaji: "muzukashii", meaning: "Qiyin" },
+{ day: 11, word: "やさしい", romaji: "yasashii", meaning: "Oson" },
+{ day: 11, word: "たかい", romaji: "takai", meaning: "qimmat; baland; yuqori" },
+{ day: 11, word: "やすい", romaji: "yasui", meaning: "Arzon" },
+{ day: 11, word: "ひくい", romaji: "hikui", meaning: "Past" },
+{ day: 11, word: "おもしろい", romaji: "omoshiroi", meaning: "Qiziqarli" },
+{ day: 11, word: "おいしい", romaji: "oishii", meaning: "Mazali" },
+{ day: 11, word: "いそがしい", romaji: "isogashii", meaning: "Band" },
+{ day: 11, word: "たのしい", romaji: "tanoshii", meaning: "Qiziq" },
+{ day: 11, word: "たべもの", romaji: "tabemono", meaning: "Yeydigan narsa" },
+{ day: 11, word: "べんきょう", romaji: "benkyou", meaning: "Dars" },
+{ day: 11, word: "せいかつ", romaji: "seikatsu", meaning: "Hayot, turmush tarzi" },
+{ day: 11, word: "(お) しごと", romaji: "(o) shigoto", meaning: "ish; yumush" },
+{ day: 11, word: "やちん", romaji: "yachin", meaning: "Uyning ijara puli" },
+{ day: 11, word: "ふじさん", romaji: "fujisan", meaning: "Fuji tog'i" },
+{ day: 11, word: "オーナー", romaji: "oonaa", meaning: "Xo'jayin" },
+{ day: 11, word: "とても", romaji: "totemo", meaning: "Juda" },
+{ day: 11, word: "そして", romaji: "soshite", meaning: "Va, keyin" },
+{ day: 11, word: "そうですね", romaji: "sou desu ne", meaning: "yaxshi; shunday" },
+{ day: 11, word: "あまり", romaji: "amari", meaning: "Unchalik" },
+{ day: 11, word: "よかったですね", romaji: "yokatta desu ne", meaning: "Yaxshi bo'libdi" },
+{ day: 11, word: "ちょっと", romaji: "chotto", meaning: "bir oz" },
+{ day: 11, word: "〜が、〜", romaji: "~ ga, ~", meaning: "~, lekin ~" },
+{ day: 11, word: "どう", romaji: "dou", meaning: "Qanaqasiga, qanday" },
+
+// --- 12-KUN LUG'ATI ---
+{ day: 12, word: "しずか（な）", romaji: "shizuka (na)", meaning: "Tinch, sokin" },
+{ day: 12, word: "にぎやか（な）", romaji: "nigiyaka (na)", meaning: "Shovqinli" },
+{ day: 12, word: "ゆうめい（な）", romaji: "yuumei (na)", meaning: "Mashhur" },
+{ day: 12, word: "べんり（な）", romaji: "benri (na)", meaning: "Qulay" },
+{ day: 12, word: "おおきい", romaji: "ookii", meaning: "Katta" },
+{ day: 12, word: "ちいさい", romaji: "chiisai", meaning: "Kichik" },
+{ day: 12, word: "あたらしい", romaji: "atarashii", meaning: "Yangi" },
+{ day: 12, word: "ふるい", romaji: "furui", meaning: "Eski" },
+{ day: 12, word: "しろい", romaji: "shiroi", meaning: "Oq" },
+{ day: 12, word: "くろい", romaji: "kuroi", meaning: "Qora" },
+{ day: 12, word: "あかい", romaji: "akai", meaning: "Qizil" },
+{ day: 12, word: "あおい", romaji: "aoi", meaning: "Ko'k" },
+{ day: 12, word: "（ご）しゅっしん", romaji: "(go) shusshin", meaning: "Ona shahri, tug'ilgan joyi" },
+{ day: 12, word: "まち", romaji: "machi", meaning: "Shahar" },
+{ day: 12, word: "ひと", romaji: "hito", meaning: "Odam" },
+{ day: 12, word: "ところ", romaji: "tokoro", meaning: "Joy" },
+{ day: 12, word: "やま", romaji: "yama", meaning: "Tog'" },
+{ day: 12, word: "ビル", romaji: "biru", meaning: "Bino" },
+{ day: 12, word: "りんご", romaji: "ringo", meaning: "Olma" },
+{ day: 12, word: "ふく", romaji: "fuku", meaning: "Kiyim" },
+{ day: 12, word: "おてら", romaji: "otera", meaning: "Otera, ibodatxona" },
+{ day: 12, word: "きんかくじ", romaji: "kinkakuji", meaning: "Kinkakuji ibodatxonasi" },
+{ day: 12, word: "とうきょうえき", romaji: "toukyou eki", meaning: "Tokio stantsiyasi" },
+{ day: 12, word: "きゅうしゅう", romaji: "kyuushuu", meaning: "Kyushu" },
+{ day: 12, word: "ふくおか", romaji: "fukuoka", meaning: "Fukuoka" },
+{ day: 12, word: "タイワン", romaji: "taiwan", meaning: "Taiwan" },
+{ day: 12, word: "タイベイ", romaji: "taibei", meaning: "Taypey" },
+{ day: 12, word: "さいきん", romaji: "saikin", meaning: "Yaqinda" },
+{ day: 12, word: "どちらのごしゅっしんですか", romaji: "dochira no goshusshin desu ka", meaning: "Siz qayerdansiz?" },
+{ day: 12, word: "どんな〜", romaji: "donna ~", meaning: "Qanday ~" },
+
+// --- 13-KUN LUG'ATI ---
+{ day: 13, word: "います", romaji: "imasu", meaning: "Bor bo'lmoq (jonli narsalarga)" },
+{ day: 13, word: "あります", romaji: "arimasu", meaning: "Bor bo'lmoq (jonsiz narsalarga)" },
+{ day: 13, word: "ATM", romaji: "eetiiemu", meaning: "ATM (bankomat)" },
+{ day: 13, word: "おとこのこ", romaji: "otoko no ko", meaning: "O'g'il bola, erkak kishi" },
+{ day: 13, word: "おんなのこ", romaji: "onna no ko", meaning: "Qiz bola, ayol kishi" },
+{ day: 13, word: "いぬ", romaji: "inu", meaning: "It" },
+{ day: 13, word: "ねこ", romaji: "neko", meaning: "Mushuk" },
+{ day: 13, word: "き", romaji: "ki", meaning: "Daraxt" },
+{ day: 13, word: "もの", romaji: "mono", meaning: "Narsa, buyum" },
+{ day: 13, word: "でんち", romaji: "denchi", meaning: "Batareya" },
+{ day: 13, word: "はこ", romaji: "hako", meaning: "Quti, yashik" },
+{ day: 13, word: "ドア", romaji: "doa", meaning: "Eshik" },
+{ day: 13, word: "まど", romaji: "mado", meaning: "Deraza" },
+{ day: 13, word: "スイッチ", romaji: "suitchi", meaning: "Viklyuchatel (elektr tokini ulaydigan va uzadigan asbob)" },
+{ day: 13, word: "れいぞうこ", romaji: "reizouko", meaning: "Muzlatgich" },
+{ day: 13, word: "テーブル", romaji: "teeburu", meaning: "Stol" },
+{ day: 13, word: "ベッド", romaji: "beddo", meaning: "Yotoq, krovat" },
+{ day: 13, word: "エアコン", romaji: "eakon", meaning: "Konditsioner" },
+{ day: 13, word: "たな", romaji: "tana", meaning: "Tokcha" },
+{ day: 13, word: "ポスト", romaji: "posuto", meaning: "Pochta qutisi" },
+{ day: 13, word: "はなや", romaji: "hanaya", meaning: "Gul do'koni" },
+{ day: 13, word: "ほんや", romaji: "honya", meaning: "Kitob do'koni" },
+{ day: 13, word: "〜や", romaji: "-ya", meaning: "do'kon" },
+{ day: 13, word: "こうばん", romaji: "kouban", meaning: "Politsiya idorasi" },
+{ day: 13, word: "ビル", romaji: "biru", meaning: "Bino" },
+{ day: 13, word: "こうえん", romaji: "kouen", meaning: "Park" },
+{ day: 13, word: "のりば", romaji: "noriba", meaning: "Bekat" },
+{ day: 13, word: "とうきょうディズニーランド", romaji: "toukyou dizniirando", meaning: "Tokio Disneyland" },
+{ day: 13, word: "ちばけん", romaji: "chiba ken", meaning: "Chiba prefekturasi" },
+{ day: 13, word: "けん", romaji: "ken", meaning: "Prefektura" },
+{ day: 13, word: "した", romaji: "shita", meaning: "Ostida" },
+{ day: 13, word: "うえ", romaji: "ue", meaning: "Yuqorida" },
+{ day: 13, word: "まえ", romaji: "mae", meaning: "Oldida" },
+{ day: 13, word: "うしろ", romaji: "ushiro", meaning: "Orqasida" },
+{ day: 13, word: "みぎ", romaji: "migi", meaning: "O'ng tomon" },
+{ day: 13, word: "ひだり", romaji: "hidari", meaning: "Chap tomon" },
+{ day: 13, word: "なか", romaji: "naka", meaning: "O'rtasida, ichkarisida" },
+{ day: 13, word: "そと", romaji: "soto", meaning: "Tashqarida" },
+{ day: 13, word: "となり", romaji: "tonari", meaning: "Yonida" },
+{ day: 13, word: "ちかく", romaji: "chikaku", meaning: "Yaqinida" },
+{ day: 13, word: "あいだ", romaji: "aida", meaning: "Orasida" },
+{ day: 13, word: "でも", romaji: "demo", meaning: "Lekin" },
+{ day: 13, word: "〜や〜", romaji: "~ ya ~", meaning: "~ va ~ va boshqalar" },
+
+// --- 14-KUN LUG'ATI ---
+{ day: 14, word: "きょうだい", romaji: "kyoudai", meaning: "Aka-uka" },
+{ day: 14, word: "あに", romaji: "ani", meaning: "Akam" },
+{ day: 14, word: "おにいさん", romaji: "oniisan", meaning: "Akangiz" },
+{ day: 14, word: "あね", romaji: "ane", meaning: "Opam" },
+{ day: 14, word: "おねえさん", romaji: "oneesan", meaning: "Opangiz" },
+{ day: 14, word: "おとうと", romaji: "otouto", meaning: "Ukam" },
+{ day: 14, word: "いもうと", romaji: "imouto", meaning: "Singlim" },
+{ day: 14, word: "おとうとさん", romaji: "otoutosan", meaning: "Ukangiz" },
+{ day: 14, word: "いもうとさん", romaji: "imoutosan", meaning: "Singlingiz" },
+{ day: 14, word: "にほんごがっこう", romaji: "nihongo gakkou", meaning: "Yapon tili maktabi" },
+{ day: 14, word: "べつべつに", romaji: "betsubetsu ni", meaning: "Alohida" },
+{ day: 14, word: "かしこまりました", romaji: "kashikomarimashita", meaning: "Men tushundim" },
+{ day: 14, word: "いくつ", romaji: "ikutsu", meaning: "Qancha" },
+{ day: 14, word: "（こどもが）いきます", romaji: "(kodomo ga) imasu", meaning: "Mening farzandlarim bor" },
+{ day: 14, word: "（にほんにおります）", romaji: "(nihon ni imasu)", meaning: "Men Yaponiyadaman" },
+{ day: 14, word: "（ご）ちゅうもん", romaji: "(go) chuumon", meaning: "Buyurtma" },
+{ day: 14, word: "おもちかえり", romaji: "omochikaeri", meaning: "Olib ketish" },
+{ day: 14, word: "おかいけい", romaji: "okaikei", meaning: "Hisob-kitob" },
+{ day: 14, word: "ひとつ", romaji: "hitotsu", meaning: "Bitta" },
+{ day: 14, word: "ふたつ", romaji: "futatsu", meaning: "Ikkita" },
+{ day: 14, word: "みっつ", romaji: "mittsu", meaning: "Uchta" },
+{ day: 14, word: "よっつ", romaji: "yottsu", meaning: "To'rtta" },
+{ day: 14, word: "いつつ", romaji: "itsutsu", meaning: "Beshta" },
+{ day: 14, word: "むっつ", romaji: "muttsu", meaning: "Oltita" },
+{ day: 14, word: "ななつ", romaji: "nanatsu", meaning: "Yettita" },
+{ day: 14, word: "やっつ", romaji: "yattsu", meaning: "Sakkizta" },
+{ day: 14, word: "ここのつ", romaji: "kokonotsu", meaning: "To'qqizta" },
+{ day: 14, word: "とお", romaji: "too", meaning: "O'nta" },
+{ day: 14, word: "ひとり", romaji: "hitori", meaning: "1 kishi" },
+{ day: 14, word: "ふたり", romaji: "futari", meaning: "Ikki kishi" },
+{ day: 14, word: "さんにん", romaji: "sannin", meaning: "Uch kishi" },
+{ day: 14, word: "〜にん", romaji: "-nin", meaning: "~ kishi (sanoq suffiksi)" },
+{ day: 14, word: "〜だい", romaji: "-dai", meaning: "~ ta (texnikalarga ishlatiladi)" },
+{ day: 14, word: "〜まい", romaji: "-mai", meaning: "~ ta (yupqa narsalar uchun)" },
+{ day: 14, word: "りんご", romaji: "ringo", meaning: "Olma" },
+{ day: 14, word: "みかん", romaji: "mikan", meaning: "Mandarin" },
+{ day: 14, word: "ぎゅうどん", romaji: "gyuudon", meaning: "Gyudon (mol go'shtidan tayyorlangan taom)" },
+{ day: 14, word: "アイスクリーム", romaji: "aisukuriimu", meaning: "Muzqaymoq" },
+{ day: 14, word: "サンドイッチ", romaji: "sandoitchi", meaning: "Sendvich" },
+{ day: 14, word: "ハンバーガー", romaji: "hanbaagaa", meaning: "Gamburger" },
+{ day: 14, word: "チーズバーガー", romaji: "chiizubaagaa", meaning: "Chizburger" },
+{ day: 14, word: "ポテト", romaji: "poteto", meaning: "Kartoshka" },
+{ day: 14, word: "きって", romaji: "kitte", meaning: "Pochta markasi" },
+{ day: 14, word: "はがき", romaji: "hagaki", meaning: "Otkritka" },
+{ day: 14, word: "ふうとう", romaji: "fuutou", meaning: "Convert" },
+{ day: 14, word: "りょうしん", romaji: "ryoushin", meaning: "Ota-ona" },
+
+// --- 15-KUN LUG'ATI ---
+{ day: 15, word: "（かいしゃを）やすみます", romaji: "(kaisha o) yasumimasu", meaning: "(Ishga bormaslik) dam olmoq" },
+{ day: 15, word: "かかります", romaji: "kakarimasu", meaning: "Sarf bo'lmoq, ketmoq (pul yoki vaqt)" },
+{ day: 15, word: "〜じかん", romaji: "-jikan", meaning: "~ soat" },
+{ day: 15, word: "〜しゅうかん", romaji: "-shuukan", meaning: "~ hafta" },
+{ day: 15, word: "〜かげつ", romaji: "-kagetsu", meaning: "~ oy" },
+{ day: 15, word: "〜ねん", romaji: "-nen", meaning: "~ yil" },
+{ day: 15, word: "〜かい", romaji: "-kai", meaning: "~ marta" },
+{ day: 15, word: "しんかんせん", romaji: "shinkansen", meaning: "Shinkansen, ekspress poyezd" },
+{ day: 15, word: "とうきょう", romaji: "toukyou", meaning: "Tokio" },
+{ day: 15, word: "おおさか", romaji: "oosaka", meaning: "Osaka" },
+{ day: 15, word: "ひろしま", romaji: "hiroshima", meaning: "Xirosima" },
+{ day: 15, word: "ニューヨーク", romaji: "nyuuyooku", meaning: "Nyu-York" },
+{ day: 15, word: "がいこく", romaji: "gaikoku", meaning: "Xorijiy davlat" },
+{ day: 15, word: "〜くらい（ぐらい）", romaji: "~ kurai (gurai)", meaning: "~lar, ~cha, taxminan~" },
+{ day: 15, word: "〜だけ", romaji: "~ dake", meaning: "Faqat" },
+{ day: 15, word: "かぜをひきます", romaji: "kaze o hikimasu", meaning: "Shamollamoq" },
+{ day: 15, word: "どのくらい（どのくらい）", romaji: "dono kurai (dono kurai)", meaning: "Qancha (vaqt)" },
+
+// --- 16-KUN LUG'ATI ---
+{ day: 16, word: "かんたん（な）", romaji: "kantan (na)", meaning: "Oson" },
+{ day: 16, word: "ちかい", romaji: "chikai", meaning: "Yaqin" },
+{ day: 16, word: "とおい", romaji: "tooi", meaning: "Uzoq" },
+{ day: 16, word: "はやい／はやい", romaji: "hayai / hayai", meaning: "Erta, tez" },
+{ day: 16, word: "おそい", romaji: "osoi", meaning: "Sekin" },
+{ day: 16, word: "おおい", romaji: "ooi", meaning: "Ko'p" },
+{ day: 16, word: "すくない", romaji: "sukunai", meaning: "Oz" },
+{ day: 16, word: "あたたかい／あたたかい", romaji: "atatakai / atatakai", meaning: "Iliq" },
+{ day: 16, word: "すずしい", romaji: "suzushii", meaning: "Ajoyib / Salqin" },
+{ day: 16, word: "あまい", romaji: "amai", meaning: "Shirin" },
+{ day: 16, word: "からい", romaji: "karai", meaning: "Achchiq" },
+{ day: 16, word: "おもい", romaji: "omoi", meaning: "Og'ir" },
+{ day: 16, word: "かるい", romaji: "karui", meaning: "Yengil" },
+{ day: 16, word: "いい（コーヒーが〜）", romaji: "ii (koohii ga ~)", meaning: "Yaxshi (yaxshi kofe)" },
+{ day: 16, word: "せがたかい", romaji: "se ga takai", meaning: "Bo'yi baland" },
+{ day: 16, word: "せがひくい", romaji: "se ga hikui", meaning: "Bo'yi past" },
+{ day: 16, word: "きせつ", romaji: "kisetsu", meaning: "Mavsum" },
+{ day: 16, word: "はる", romaji: "haru", meaning: "Bahor" },
+{ day: 16, word: "なつ", romaji: "natsu", meaning: "Yoz" },
+{ day: 16, word: "あき", romaji: "aki", meaning: "Kuz" },
+{ day: 16, word: "ふゆ", romaji: "fuyu", meaning: "Qish" },
+{ day: 16, word: "ホテル", romaji: "hoteru", meaning: "Mehmonxona" },
+{ day: 16, word: "くうこう", romaji: "kuukou", meaning: "Aeroport" },
+{ day: 16, word: "やま", romaji: "yama", meaning: "Tog'" },
+{ day: 16, word: "うみ", romaji: "umi", meaning: "Dengiz" },
+{ day: 16, word: "おきなわ", romaji: "okinawa", meaning: "Okinawa" },
+{ day: 16, word: "じんこう", romaji: "jinkou", meaning: "Aholi" },
+{ day: 16, word: "せかい", romaji: "sekai", meaning: "Dunyo" },
+{ day: 16, word: "としうえ", romaji: "toshiue", meaning: "Yoshi katta, keksa" },
+{ day: 16, word: "としした", romaji: "toshishita", meaning: "Yoshi kichkina" },
+{ day: 16, word: "〜センチ（メートル）", romaji: "~senchi (meetoru)", meaning: "~sm" },
+{ day: 16, word: "どちら", romaji: "dochira", meaning: "Qaysi" },
+{ day: 16, word: "どちらも", romaji: "dochira mo", meaning: "Ikkalasi ham" },
+{ day: 16, word: "ずっと", romaji: "zutto", meaning: "Ancha, ancha vaqt" },
+{ day: 16, word: "いちばん〜", romaji: "ichiban ~", meaning: "Birinchi raqam / Eng~" },
+{ day: 16, word: "より", romaji: "yori", meaning: "~dan" },
+{ day: 16, word: "〜はいかがですか", romaji: "~ wa ikaga desu ka", meaning: "~qalay?" },
+{ day: 16, word: "〜のほうが", romaji: "~ no hou ga", meaning: "~yaxshiroq" },
+{ day: 16, word: "にほんりょうり", romaji: "nihon ryouri", meaning: "Yapon oshxonasi" },
+{ day: 16, word: "ぶっきょうのおてら", romaji: "bukkyou no otera", meaning: "Buddistlar ibodatxonasi" },
+{ day: 16, word: "バイク", romaji: "baiku", meaning: "Velosiped / Mototsikl" },
+{ day: 16, word: "じしん", romaji: "jishin", meaning: "Zilzila" },
+
+// --- 17-KUN LUG'ATI ---
+{ day: 17, word: "つかれます", romaji: "tsukaremasu", meaning: "Charchamoq" },
+{ day: 17, word: "つかれました", romaji: "tsukaremashita", meaning: "Charchadim" },
+{ day: 17, word: "さびしい", romaji: "sabishii", meaning: "Sog'inish / Yolg'iz" },
+{ day: 17, word: "ひろい", romaji: "hiroi", meaning: "Keng" },
+{ day: 17, word: "せまい", romaji: "semai", meaning: "Tor" },
+{ day: 17, word: "アルバイト", romaji: "arubaito", meaning: "Soatbay ish (Arubaito)" },
+{ day: 17, word: "かぶき", romaji: "kabuki", meaning: "Kabuki" },
+{ day: 17, word: "はれ", romaji: "hare", meaning: "Ochiq-havo" },
+{ day: 17, word: "あめ", romaji: "ame", meaning: "Yomg'ir" },
+{ day: 17, word: "くもり", romaji: "kumori", meaning: "Bulutli" },
+{ day: 17, word: "ゆき", romaji: "yuki", meaning: "Qor" },
+{ day: 17, word: "おまつり", romaji: "omatsuri", meaning: "Festival, marosim" },
+{ day: 17, word: "でも", romaji: "demo", meaning: "Ammo, lekin" },
+{ day: 17, word: "はじめて", romaji: "hajimete", meaning: "Birinchi marta" },
+{ day: 17, word: "とくに", romaji: "tokuni", meaning: "Ayniqsa" },
+
+// --- 18-KUN LUG'ATI ---
+{ day: 18, word: "けっこんします", romaji: "kekkon shimasu", meaning: "Uylanmoq, turmush qurmoq" },
+{ day: 18, word: "ほしい", romaji: "hoshii", meaning: "Xohlamoq" },
+{ day: 18, word: "けいざい", romaji: "keizai", meaning: "Iqtisod" },
+{ day: 18, word: "でんしレンジ", romaji: "denshirenji", meaning: "Mikroto'lqinli pech" },
+{ day: 18, word: "いけばな", romaji: "ikebana", meaning: "Ikebana, gul aranjirovkasi" },
+{ day: 18, word: "てんき", romaji: "tenki", meaning: "Ob-havo" },
+{ day: 18, word: "おながかすきました", romaji: "onaga ga sukimashita", meaning: "Qornim ochdi" },
+{ day: 18, word: "おなががいっぱいです", romaji: "onaga ga ippai desu", meaning: "Qornim to'q" },
+{ day: 18, word: "なにか", romaji: "nanika", meaning: "Nimadir" },
+{ day: 18, word: "どこか", romaji: "dokoka", meaning: "Qayerdadir" },
+{ day: 18, word: "ゲームをします", romaji: "geemu o shimasu", meaning: "O'yin o'ynamoq" },
+{ day: 18, word: "〜のとき", romaji: "~ no toki", meaning: "~ning payti" },
+
+// --- 19-KUN LUG'ATI ---
+{ day: 19, word: "あそびます", romaji: "asobimasu", meaning: "O'ynamoq" },
+{ day: 19, word: "およぎます", romaji: "oyogimasu", meaning: "Suzmoq" },
+{ day: 19, word: "(てがみを) だします", romaji: "(tegami o) dashimasu", meaning: "Xat yozmoq (jo'natmoq)" },
+{ day: 19, word: "かいものします", romaji: "kaimono shimasu", meaning: "Xarid qilmoq" },
+{ day: 19, word: "しょくじします", romaji: "shokuji shimasu", meaning: "Ovqatlanmoq" },
+{ day: 19, word: "さんぽします", romaji: "sanpo shimasu", meaning: "Sayr qilmoq" },
+{ day: 19, word: "むかえます", romaji: "mukaemasu", meaning: "Kutib olmoq" },
+{ day: 19, word: "ビザをとります", romaji: "biza o torimasu", meaning: "Viza olmoq" },
+{ day: 19, word: "しやくしょ", romaji: "shiyakusho", meaning: "Hokimiyat" },
+{ day: 19, word: "えき", romaji: "eki", meaning: "Bekat / Stansiya" },
+{ day: 19, word: "しんじゅく", romaji: "shinjuku", meaning: "Shinjuku" },
+{ day: 19, word: "いけぶくろ", romaji: "ikebukuro", meaning: "Ikebukuro" },
+{ day: 19, word: "きょうと", romaji: "kyouto", meaning: "Kioto" },
+{ day: 19, word: "ほっかいどう", romaji: "hokkaidou", meaning: "Xokkaydo" },
+{ day: 19, word: "たいしかん", romaji: "taishikan", meaning: "Elchixona" },
+{ day: 19, word: "スキー", romaji: "sukii", meaning: "Chang'i" },
+{ day: 19, word: "プール", romaji: "puuru", meaning: "Baseyn" },
+{ day: 19, word: "かいぎ", romaji: "kaigi", meaning: "Majlis" },
+{ day: 19, word: "しゅうまつ", romaji: "shuumatsu", meaning: "Hafta oxiri" },
+{ day: 19, word: "じゅうみんひょう", romaji: "juuminhyou", meaning: "Rasmiy ro'yxatga olinganlik xujjati" },
+{ day: 19, word: "フランス", romaji: "furansu", meaning: "Fransiya" },
+{ day: 19, word: "クラシック", romaji: "kurashikku", meaning: "Klassik" },
+{ day: 19, word: "こんど", romaji: "kondo", meaning: "Keyingi safar" },
+{ day: 19, word: "〜ごろ", romaji: "-goro", meaning: "Chamasi, taxminan" },
+{ day: 19, word: "だいじょうぶ", romaji: "daijoubu", meaning: "Hammasi joyida" }
+            ],
+            grammar: [
+                { day: 1, title: '〜たいです', formula: 'Fe\'l + たいです', explanation: 'Xohish-istakni bildiradi.', example_jp: '日本へ行きたいです。', example_reading: 'Nihon e ikitaidesu.', example_uz: 'Yaponiyaga borishni xohlayman.' },
+                { day: 2, title: '〜てください', formula: 'Fe\'l (Te) + ください', explanation: 'Iltimosni bildiradi.', example_jp: '書いてください。', example_reading: 'Kaite kudasai.', example_uz: 'Iltimos, yozing.' }
+            ],
+            dialogues: [
+                { day: 1, title: "Do'konda", desc: "Kassir va xaridor", lines: [{ speaker: "Kassir", jp: "いらっしゃいませ！", reading: "Irasshaimase!", uz: "Xush kelibsiz!" }] }
+            ]
+        };
+
+        let customWords = JSON.parse(localStorage.getItem('my_jp_custom_words') || '[]');
+        let selectedDays = Array.from({length: 19}, (_, i) => i + 1);
+
+        let currentCategory = 'n5_kanji';
+        let sortMode = 'sequential';
+        let currentMode = 'flashcard';
+        let activeData = [];
+        let currentIndex = 0;
+        let currentGrammarIndex = 0;
+        let currentDialogueIndex = 0;
+        let isFlipped = false;
+        let score = 0;
+        let currentAudioQuestion = null;
+        let currentSpeechTarget = null;
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function setSortMode(mode) {
+            sortMode = mode;
+            const seqBtn = document.getElementById('sort-sequential-btn');
+            const randBtn = document.getElementById('sort-random-btn');
+
+            if (mode === 'sequential') {
+                seqBtn.className = "bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg";
+                randBtn.className = "bg-[#0f172a] text-gray-400 border border-gray-700/80 hover:text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition";
+            } else {
+                randBtn.className = "bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg";
+                seqBtn.className = "bg-[#0f172a] text-gray-400 border border-gray-700/80 hover:text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition";
+            }
+            reshuffleData();
+        }
+
+        function initDayCheckboxes() {
+            const container = document.getElementById('days-checkbox-container');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 19; i++) {
+                const label = document.createElement('label');
+                label.className = "flex items-center gap-2 p-1.5 rounded hover:bg-gray-800 cursor-pointer text-xs";
+                const isChecked = selectedDays.includes(i) ? 'checked' : '';
+                label.innerHTML = `
+                    <input type="checkbox" value="${i}" ${isChecked} onchange="onDayCheckboxChange(this)" class="accent-rose-500 rounded cursor-pointer">
+                    <span>${i}-kun</span>
+                `;
+                container.appendChild(label);
+            }
+            updateSelectedDaysText();
+        }
+
+        function initCustomDaySelect() {
+            const select = document.getElementById('custom-day-select');
+            if (!select) return;
+            select.innerHTML = '';
+            for (let i = 1; i <= 19; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `${i}-kun`;
+                select.appendChild(opt);
+            }
+        }
+
+        function toggleDayDropdown() {
+            document.getElementById('day-dropdown-menu').classList.toggle('hidden');
+        }
+
+        function closeDayDropdown(e) {
+            const dropdown = document.getElementById('day-dropdown-menu');
+            const trigger = e.target.closest('[onclick*="toggleDayDropdown"]');
+            
+            if (dropdown && !dropdown.contains(e.target) && !trigger) {
+                dropdown.classList.add('hidden');
+            }
+        }
+
+        function onDayCheckboxChange(checkbox) {
+            const val = parseInt(checkbox.value);
+            if (checkbox.checked) {
+                if (!selectedDays.includes(val)) selectedDays.push(val);
+            } else {
+                selectedDays = selectedDays.filter(d => d !== val);
+            }
+            selectedDays.sort((a,b) => a - b);
+            updateSelectedDaysText();
+            reshuffleData();
+        }
+
+        function selectAllDays() {
+            selectedDays = Array.from({length: 19}, (_, i) => i + 1);
+            document.querySelectorAll('#days-checkbox-container input').forEach(cb => cb.checked = true);
+            updateSelectedDaysText();
+            reshuffleData();
+        }
+
+        function deselectAllDays() {
+            selectedDays = [];
+            document.querySelectorAll('#days-checkbox-container input').forEach(cb => cb.checked = false);
+            updateSelectedDaysText();
+            reshuffleData();
+        }
+
+        function toggleAllDays() {
+            if (selectedDays.length === 19) deselectAllDays();
+            else selectAllDays();
+        }
+
+        function updateSelectedDaysText() {
+            const txt = document.getElementById('selected-days-text');
+            if (!txt) return;
+            if (selectedDays.length === 19) txt.innerText = "Barcha kunlar (1-19)";
+            else if (selectedDays.length === 0) txt.innerText = "Hech qaysi kun tanlanmagan";
+            else txt.innerText = `${selectedDays.length} ta kun tanlandi (${selectedDays.join(', ')})`;
+        }
+
+        function changeCategory() {
+            currentCategory = document.getElementById('level-select').value;
+            reshuffleData();
+        }
+
+        function reshuffleData() {
+            let base = [...(database[currentCategory] || [])];
+            let customFiltered = customWords.filter(w => w.cat === currentCategory);
+            let combined = [...base, ...customFiltered].filter(w => selectedDays.includes(w.day));
+
+            if (sortMode === 'random') {
+                activeData = shuffleArray(combined);
+            } else {
+                activeData = combined.sort((a,b) => a.day - b.day);
+            }
+
+            currentIndex = 0;
+            renderCurrentMode();
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const modes = ['flashcard', 'dialogue', 'grammar', 'quiz', 'audio', 'reverse', 'speech', 'ai', 'list'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                const sec = document.getElementById(`section-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "px-3 py-2 rounded-lg text-xs font-medium bg-[#e11d48] text-white flex items-center gap-1.5 whitespace-nowrap";
+                    } else {
+                        btn.className = "px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap";
+                    }
+                }
+                if (sec) sec.classList.add('hidden');
+            });
+
+            const activeSec = document.getElementById(`section-${mode}`);
+            if (activeSec) {
+                activeSec.classList.remove('hidden');
+                activeSec.classList.add('flex');
+            }
+
+            renderCurrentMode();
+        }
+
+        function renderCurrentMode() {
+            if (currentMode === 'flashcard') renderFlashcard();
+            else if (currentMode === 'dialogue') renderDialogue();
+            else if (currentMode === 'grammar') renderGrammar();
+            else if (currentMode === 'quiz') renderQuiz();
+            else if (currentMode === 'audio') renderAudio();
+            else if (currentMode === 'reverse') renderReverse();
+            else if (currentMode === 'speech') renderSpeech();
+            else if (currentMode === 'ai') renderAiTutor();
+            else if (currentMode === 'list') renderList();
+        }
+
+        function renderFlashcard() {
+            isFlipped = false;
+            const inner = document.getElementById('card-inner');
+            if (inner) inner.classList.remove('rotate-y-180');
+
+            if (activeData.length === 0) {
+                document.getElementById('kanji-display').innerText = ' - ';
+                document.getElementById('reading-display').innerText = 'Ma\'lumot yo\'q';
+                document.getElementById('romaji-display').innerText = '';
+                document.getElementById('meaning-display').innerText = 'Kunlarni tanlang';
+                document.getElementById('current-index').innerText = '0';
+                document.getElementById('total-cards').innerText = '0';
+                return;
+            }
+
+            const current = activeData[currentIndex];
+            document.getElementById('kanji-display').innerText = current.word;
+            document.getElementById('reading-display').innerText = current.reading;
+            document.getElementById('romaji-display').innerText = current.romaji || '';
+            document.getElementById('meaning-display').innerText = current.meaning;
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-cards').innerText = activeData.length;
+        }
+
+        function flipCard() {
+            if (activeData.length === 0) return;
+            isFlipped = !isFlipped;
+            const inner = document.getElementById('card-inner');
+            if (inner) inner.classList.toggle('rotate-y-180');
+        }
+
+        function nextCard() {
+            if (activeData.length === 0) return;
+            currentIndex = (currentIndex + 1) % activeData.length;
+            renderFlashcard();
+        }
+
+        function prevCard() {
+            if (activeData.length === 0) return;
+            currentIndex = (currentIndex - 1 + activeData.length) % activeData.length;
+            renderFlashcard();
+        }
+
+        function speakWord() {
+            if (activeData.length === 0) return;
+            const item = activeData[currentIndex];
+            let text = item.word || item.reading;
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Dialogue Mode
+        function renderDialogue() {
+            const filtered = database.dialogues.filter(d => selectedDays.includes(d.day));
+            document.getElementById('dialogue-total').innerText = filtered.length;
+            if (filtered.length === 0) {
+                document.getElementById('dialogue-title').innerText = "Muloqot topilmadi";
+                document.getElementById('dialogue-desc').innerText = "Boshqa kunni tanlang";
+                document.getElementById('dialogue-lines-container').innerHTML = '';
+                document.getElementById('dialogue-index').innerText = '0';
+                return;
+            }
+            if (currentDialogueIndex >= filtered.length) currentDialogueIndex = 0;
+            const d = filtered[currentDialogueIndex];
+            document.getElementById('dialogue-index').innerText = currentDialogueIndex + 1;
+            document.getElementById('dialogue-title').innerText = d.title;
+            document.getElementById('dialogue-desc').innerText = d.desc;
+
+            const container = document.getElementById('dialogue-lines-container');
+            container.innerHTML = '';
+            d.lines.forEach(l => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-[#0f172a] rounded-xl border border-gray-800 flex flex-col gap-1";
+                div.innerHTML = `
+                    <span class="text-xs text-rose-400 font-bold">${l.speaker}:</span>
+                    <span class="text-base text-white font-semibold">${l.jp}</span>
+                    <span class="text-xs text-amber-300 font-mono">${l.reading}</span>
+                    <span class="text-xs text-emerald-400">${l.uz}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function nextDialogue() {
+            const filtered = database.dialogues.filter(d => selectedDays.includes(d.day));
+            if (filtered.length === 0) return;
+            currentDialogueIndex = (currentDialogueIndex + 1) % filtered.length;
+            renderDialogue();
+        }
+
+        function prevDialogue() {
+            const filtered = database.dialogues.filter(d => selectedDays.includes(d.day));
+            if (filtered.length === 0) return;
+            currentDialogueIndex = (currentDialogueIndex - 1 + filtered.length) % filtered.length;
+            renderDialogue();
+        }
+
+        // Grammar Mode
+        function renderGrammar() {
+            const filtered = database.grammar.filter(g => selectedDays.includes(g.day));
+            document.getElementById('grammar-total').innerText = filtered.length;
+            if (filtered.length === 0) {
+                document.getElementById('grammar-title').innerText = "Grammatika topilmadi";
+                document.getElementById('grammar-formula').innerText = "-";
+                document.getElementById('grammar-explanation').innerText = "Tanlangan kunlar bo'yicha grammatika mavjud emas.";
+                document.getElementById('grammar-example-jp').innerText = "-";
+                document.getElementById('grammar-example-reading').innerText = "-";
+                document.getElementById('grammar-example-uz').innerText = "-";
+                document.getElementById('grammar-index').innerText = '0';
+                return;
+            }
+            if (currentGrammarIndex >= filtered.length) currentGrammarIndex = 0;
+            const g = filtered[currentGrammarIndex];
+            document.getElementById('grammar-index').innerText = currentGrammarIndex + 1;
+            document.getElementById('grammar-title').innerText = g.title;
+            document.getElementById('grammar-formula').innerText = g.formula;
+            document.getElementById('grammar-explanation').innerText = g.explanation;
+            document.getElementById('grammar-example-jp').innerText = g.example_jp;
+            document.getElementById('grammar-example-reading').innerText = g.example_reading;
+            document.getElementById('grammar-example-uz').innerText = g.example_uz;
+        }
+
+        function nextGrammar() {
+            const filtered = database.grammar.filter(g => selectedDays.includes(g.day));
+            if (filtered.length === 0) return;
+            currentGrammarIndex = (currentGrammarIndex + 1) % filtered.length;
+            renderGrammar();
+        }
+
+        function prevGrammar() {
+            const filtered = database.grammar.filter(g => selectedDays.includes(g.day));
+            if (filtered.length === 0) return;
+            currentGrammarIndex = (currentGrammarIndex - 1 + filtered.length) % filtered.length;
+            renderGrammar();
+        }
+
+        // Quiz Mode
+        function renderQuiz() {
+            const container = document.getElementById('quiz-options');
+            container.innerHTML = '';
+
+            if (activeData.length < 2) {
+                document.getElementById('quiz-question').innerText = "-";
+                container.innerHTML = "<p class='text-xs text-gray-400 text-center col-span-2'>Test uchun kamida 2 ta so'z tanlanishi kerak.</p>";
+                return;
+            }
+
+            const current = activeData[Math.floor(Math.random() * activeData.length)];
+            document.getElementById('quiz-question').innerText = current.word;
+
+            let options = [current];
+            while (options.length < Math.min(4, activeData.length)) {
+                let rand = activeData[Math.floor(Math.random() * activeData.length)];
+                if (!options.includes(rand)) options.push(rand);
+            }
+            options = shuffleArray(options);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-[#0f172a] hover:bg-rose-900/40 border border-gray-700 p-3 rounded-xl text-sm font-semibold transition text-left";
+                btn.innerText = opt.meaning;
+                btn.onclick = () => checkQuizAnswer(opt === current, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(isCorrect, btn) {
+            if (isCorrect) {
+                btn.className = "bg-emerald-600 text-white border border-emerald-500 p-3 rounded-xl text-sm font-semibold text-left";
+                addScore(10);
+                setTimeout(renderQuiz, 800);
+            } else {
+                btn.className = "bg-rose-600 text-white border border-rose-500 p-3 rounded-xl text-sm font-semibold text-left";
+            }
+        }
+
+        // Audio Mode
+        function renderAudio() {
+            const container = document.getElementById('audio-options');
+            container.innerHTML = '';
+
+            if (activeData.length < 2) {
+                container.innerHTML = "<p class='text-xs text-gray-400 text-center col-span-2'>Audio test uchun yetarli so'z yo'q.</p>";
+                return;
+            }
+
+            currentAudioQuestion = activeData[Math.floor(Math.random() * activeData.length)];
+            playAudioQuestion();
+
+            let options = [currentAudioQuestion];
+            while (options.length < Math.min(4, activeData.length)) {
+                let rand = activeData[Math.floor(Math.random() * activeData.length)];
+                if (!options.includes(rand)) options.push(rand);
+            }
+            options = shuffleArray(options);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-[#0f172a] hover:bg-rose-900/40 border border-gray-700 p-3 rounded-xl text-sm font-semibold transition text-left";
+                btn.innerText = opt.meaning;
+                btn.onclick = () => {
+                    if (opt === currentAudioQuestion) {
+                        btn.className = "bg-emerald-600 text-white p-3 rounded-xl text-sm font-semibold text-left";
+                        addScore(10);
+                        setTimeout(renderAudio, 800);
+                    } else {
+                        btn.className = "bg-rose-600 text-white p-3 rounded-xl text-sm font-semibold text-left";
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function playAudioQuestion() {
+            if (!currentAudioQuestion) return;
+            let utterance = new SpeechSynthesisUtterance(currentAudioQuestion.reading || currentAudioQuestion.word);
+            utterance.lang = 'ja-JP';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Reverse Mode
+        function renderReverse() {
+            const container = document.getElementById('reverse-options');
+            container.innerHTML = '';
+
+            if (activeData.length < 2) {
+                document.getElementById('reverse-question').innerText = "-";
+                container.innerHTML = "<p class='text-xs text-gray-400 text-center col-span-2'>Test uchun kamida 2 ta so'z kerak.</p>";
+                return;
+            }
+
+            const current = activeData[Math.floor(Math.random() * activeData.length)];
+            document.getElementById('reverse-question').innerText = current.meaning;
+
+            let options = [current];
+            while (options.length < Math.min(4, activeData.length)) {
+                let rand = activeData[Math.floor(Math.random() * activeData.length)];
+                if (!options.includes(rand)) options.push(rand);
+            }
+            options = shuffleArray(options);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-[#0f172a] hover:bg-rose-900/40 border border-gray-700 p-3 rounded-xl text-sm font-semibold transition text-center";
+                btn.innerHTML = `<span class="text-base text-white">${opt.word}</span> <span class="text-xs text-amber-300 block">${opt.reading}</span>`;
+                btn.onclick = () => {
+                    if (opt === current) {
+                        btn.className = "bg-emerald-600 text-white p-3 rounded-xl text-sm font-semibold text-center";
+                        addScore(10);
+                        setTimeout(renderReverse, 800);
+                    } else {
+                        btn.className = "bg-rose-600 text-white p-3 rounded-xl text-sm font-semibold text-center";
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // Speech Mode
+        function renderSpeech() {
+            if (activeData.length === 0) {
+                document.getElementById('speech-target').innerText = "-";
+                document.getElementById('speech-target-reading').innerText = "So'z yo'q";
+                return;
+            }
+            currentSpeechTarget = activeData[Math.floor(Math.random() * activeData.length)];
+            document.getElementById('speech-target').innerText = currentSpeechTarget.word;
+            document.getElementById('speech-target-reading').innerText = currentSpeechTarget.reading;
+            document.getElementById('speech-status').innerText = "Mikrofonni bosing va yaponcha ayting...";
+            const res = document.getElementById('speech-result');
+            res.classList.add('hidden');
+        }
+
+        function startSpeechRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Brauzeringiz ovoz tanishni qo'llab-quvvatlamaydi.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ja-JP';
+
+            document.getElementById('speech-status').innerText = "Eshitilmoqda...";
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const res = document.getElementById('speech-result');
+                res.classList.remove('hidden');
+
+                if (transcript === currentSpeechTarget.word || transcript === currentSpeechTarget.reading) {
+                    res.className = "mt-4 p-3 bg-emerald-950/80 border border-emerald-500 text-emerald-300 rounded-xl text-sm font-semibold";
+                    res.innerText = `Ajoyib! Siz aytdingiz: "${transcript}" (To'g'ri)`;
+                    addScore(15);
+                    setTimeout(renderSpeech, 1500);
+                } else {
+                    res.className = "mt-4 p-3 bg-rose-950/80 border border-rose-500 text-rose-300 rounded-xl text-sm font-semibold";
+                    res.innerText = `Qaytadan urinib ko'ring. Siz aytdingiz: "${transcript}"`;
+                }
+            };
+
+            recognition.onerror = () => {
+                document.getElementById('speech-status').innerText = "Xatolik yuz berdi. Qaytadan urinib ko'ring.";
+            };
+
+            recognition.start();
+        }
+
+        // Search / List Mode
+        function renderList() {
+            filterList();
+        }
+
+        function filterList() {
+            const input = document.getElementById('search-input');
+            const filter = input ? input.value.toLowerCase() : '';
+            const container = document.getElementById('words-list');
+            if (!container) return;
+
+            container.innerHTML = '';
+            let filtered = activeData.filter(w => 
+                w.word.toLowerCase().includes(filter) ||
+                w.reading.toLowerCase().includes(filter) ||
+                w.meaning.toLowerCase().includes(filter) ||
+                (w.romaji && w.romaji.toLowerCase().includes(filter))
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = "<p class='text-xs text-gray-400 text-center py-4'>Hech narsa topilmadi.</p>";
+                return;
+            }
+
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-[#0f172a] rounded-xl border border-gray-800 flex justify-between items-center";
+                div.innerHTML = `
+                    <div>
+                        <div class="text-base font-bold text-white">${item.word} <span class="text-xs text-amber-400 font-normal">(${item.reading})</span></div>
+                        <div class="text-xs text-gray-400">${item.romaji || ''}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-semibold text-emerald-400">${item.meaning}</span>
+                        <span class="text-[10px] text-rose-400 block">${item.day}-kun</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Add Custom Word
+        function openAddModal() {
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+        }
+
+        function saveCustomWord(e) {
+            e.preventDefault();
+            const day = parseInt(document.getElementById('custom-day-select').value);
+            const cat = document.getElementById('custom-cat-select').value;
+            const word = document.getElementById('custom-word').value;
+            const reading = document.getElementById('custom-reading').value;
+            const romaji = document.getElementById('custom-romaji').value;
+            const meaning = document.getElementById('custom-meaning').value;
+
+            const newWord = { day, cat, word, reading, romaji, meaning };
+            customWords.push(newWord);
+            localStorage.setItem('my_jp_custom_words', JSON.stringify(customWords));
+
+            closeAddModal();
+            e.target.reset();
+            reshuffleData();
+            alert("Yangi so'z muvaffaqiyatli saqlandi!");
+        }
+
+        function addScore(pts) {
+            score += pts;
+            document.getElementById('streak').innerText = score;
+        }
+
+        // AI Ustoz
+        let aiConversation = [];
+        function renderAiTutor(){ if(!aiConversation.length){ aiConversation=[{role:'assistant',content:'こんにちは！私はあなたのAI日本語先生です。\n\nN5/N4 darajasida yaponcha suhbat qilamiz. Yaponcha yozing yoki 🎤 tugmasini bosing!'}]; } renderAiMessages(); }
+        function renderAiMessages(){ const c=document.getElementById('ai-chat-messages'); if(!c)return; c.innerHTML=''; aiConversation.forEach(m=>{const d=document.createElement('div'); d.className=m.role==='user'?'ml-auto max-w-[85%] bg-rose-600 rounded-2xl rounded-br-sm px-4 py-3 text-sm whitespace-pre-wrap':'mr-auto max-w-[85%] bg-[#0f172a] border border-gray-700 rounded-2xl rounded-bl-sm px-4 py-3 text-sm whitespace-pre-wrap'; d.innerText=m.content;c.appendChild(d)});c.scrollTop=c.scrollHeight; }
+        async function sendAiMessage(){ const input=document.getElementById('ai-chat-input'); const msg=input.value.trim(); if(!msg)return; aiConversation.push({role:'user',content:msg});input.value='';renderAiMessages();document.getElementById('ai-status').innerText='🤖 AI javob tayyorlamoqda...';try{const r=await fetch('/api/japanese-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiConversation})});const d=await r.json();if(!r.ok)throw new Error(d.error);aiConversation.push({role:'assistant',content:d.reply});renderAiMessages();document.getElementById('ai-status').innerText='AI javob berdi.';speakAiReply(d.reply)}catch(e){document.getElementById('ai-status').innerText='AI serverga ulanib bo‘lmadi. Serverni ishga tushiring.';}}
+        function speakAiReply(text){speechSynthesis.cancel();const jp=text.match(/[ぁ-んァ-ン一-龯々ー、。！？\s]+/g)?.join(' ');if(!jp?.trim())return;const u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';u.rate=.85;speechSynthesis.speak(u)}
+        function startAiVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Brauzer ovoz tanishni qo‘llab-quvvatlamaydi. Chrome ishlating.');return}const r=new SR();r.lang='ja-JP';r.interimResults=false;document.getElementById('ai-status').innerText='🎤 Sizni tinglayapman...';r.onresult=e=>{document.getElementById('ai-chat-input').value=e.results[0][0].transcript;sendAiMessage()};r.onerror=()=>document.getElementById('ai-status').innerText='Mikrofon xatosi. Qayta urinib ko‘ring.';r.start()}
+        async function finishAiConversation(){if(aiConversation.filter(x=>x.role==='user').length<1){alert('Avval AI bilan suhbat qiling.');return}const b=document.getElementById('ai-evaluation');b.classList.remove('hidden');b.innerHTML='📊 Suhbat tahlil qilinmoqda...';try{const r=await fetch('/api/japanese-evaluate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiConversation})});const d=await r.json();b.innerHTML=`<h3 class="text-lg font-bold text-emerald-400 mb-3">📊 AI Ustoz bahosi</h3><div class="grid grid-cols-2 gap-3 text-sm"><div class="bg-[#1e293b] p-3 rounded-xl">Grammatika<div class="text-xl font-bold">${d.grammar}/100</div></div><div class="bg-[#1e293b] p-3 rounded-xl">Lug‘at<div class="text-xl font-bold">${d.vocabulary}/100</div></div><div class="bg-[#1e293b] p-3 rounded-xl">Suhbat<div class="text-xl font-bold">${d.conversation}/100</div></div><div class="bg-[#1e293b] p-3 rounded-xl">Umumiy<div class="text-xl font-bold text-emerald-400">${d.overall}/100</div></div></div><p class="mt-4 text-sm text-gray-300"><b class="text-amber-400">AI tavsiyasi:</b><br>${d.feedback}</p>`}catch(e){b.innerHTML='<p class="text-rose-400">Baholashda xatolik yuz berdi.</p>'}}
+
+        // Global click to handle dropdown closing
+        document.addEventListener('click', closeDayDropdown);
+
+        // Init App
+        window.onload = () => {
+            initDayCheckboxes();
+            initCustomDaySelect();
+            reshuffleData();
+        };
+    </script>
+</body>
+</html>
