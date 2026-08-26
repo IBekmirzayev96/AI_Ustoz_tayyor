@@ -78,11 +78,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
             <div class="relative" onclick="event.stopPropagation()">
                 <label class="text-[11px] text-gray-400 font-semibold mb-1 flex justify-between items-center">
-                    <span>DARS / KUN BO'LIMLARI (1-22):</span>
+                    <span>DARS / KUN BO'LIMLARI (1-23):</span>
                     <span class="text-rose-400 cursor-pointer hover:underline" onclick="toggleAllDays()">Barchasi / Tozalash</span>
                 </label>
                 <div onclick="toggleDayDropdown()" class="bg-[#1e293b] border border-gray-700 text-white text-sm rounded-lg px-4 py-2 flex justify-between items-center cursor-pointer min-h-[42px]">
-                    <span id="selected-days-text" class="truncate text-rose-400 font-semibold">1-22 kunlar tanlangan</span>
+                    <span id="selected-days-text" class="truncate text-rose-400 font-semibold">1-23 kunlar tanlangan</span>
                     <i class="fa-solid fa-chevron-down text-xs text-gray-400 ml-2"></i>
                 </div>
 
@@ -713,6 +713,23 @@
 { day: 22, word: "少ない", reading: "すくない", romaji: "sukunai", meaning: "Oz / Kam" },
 { day: 22, word: "少年", reading: "しょうねん", romaji: "shōnen", meaning: "O'smir bola / Yigit" },
 { day: 22, word: "少女", reading: "しょうじょ", romaji: "shōjo", meaning: "O'smir qiz / Qiz bola" },
+
+
+// --- 23-KUN KANJILARI ---
+{ day: 23, word: "多い", reading: "おおい", romaji: "ōi", meaning: "Ko'p" },
+{ day: 23, word: "多分", reading: "たぶん", romaji: "tabun", meaning: "Ehtimol" },
+
+{ day: 23, word: "高い", reading: "たかい", romaji: "takai", meaning: "Yuqori / Qimmat" },
+{ day: 23, word: "高校", reading: "こうこう", romaji: "kōkō", meaning: "Litsey / Yuqori maktab" },
+{ day: 23, word: "最高", reading: "さいこう", romaji: "saikō", meaning: "Eng zo'r / Eng yuqori" },
+
+{ day: 23, word: "早い", reading: "はやい", romaji: "hayai", meaning: "Erta" },
+
+{ day: 23, word: "古い", reading: "ふるい", romaji: "furui", meaning: "Eski" },
+
+{ day: 23, word: "名古屋", reading: "なごや", romaji: "Nagoya", meaning: "Nagoya (shahar)" },
+
+
             ],
             n5_vocab: [
   // --- 1-KUN LUG'ATI (1-qism) ---
@@ -1437,6 +1454,27 @@
 { day: 22, word: "つめきり", romaji: "tsumekiri", meaning: "Tirnoq olg'ich" },
 { day: 22, word: "ながのけん", romaji: "nagano-ken", meaning: "Nagano prefekturasi" },
 { day: 22, word: "ガーデニング", romaji: "gādeningu", meaning: "Bog'dorchilik" },
+
+// --- 23-KUN LUG'ATI ---
+{ day: 23, word: "(でんしゃに) のります", romaji: "(densha ni) norimasu", meaning: "Chiqmoq, minmoq (poyezdga chiqmoq)" },
+{ day: 23, word: "(でんしゃを) おります", romaji: "(densha wo) orimasu", meaning: "Tushmoq (poyezddan tushmoq)" },
+{ day: 23, word: "(でんしゃに) のりかえます", romaji: "(densha ni) norikaemasu", meaning: "Boshqa transportga almashmoq" },
+{ day: 23, word: "(シャワーを) あびます", romaji: "(shawā wo) abimasu", meaning: "Qabul qilmoq (dush qabul qilmoq)" },
+{ day: 23, word: "いれます", romaji: "iremasu", meaning: "Solmoq, qo'ymoq" },
+{ day: 23, word: "だします", romaji: "dashimasu", meaning: "Chiqarmoq" },
+{ day: 23, word: "(だいがくに) はいります", romaji: "(daigaku ni) hairimasu", meaning: "Kirmoq (universitetga)" },
+{ day: 23, word: "(だいがくを) でます", romaji: "(daigaku wo) demasu", meaning: "Bitirmoq (universitetni)" },
+{ day: 23, word: "おします", romaji: "oshimasu", meaning: "Bosmoq" },
+{ day: 23, word: "ジョギングします", romaji: "jogingu shimasu", meaning: "Yugurmoq" },
+
+{ day: 23, word: "シャワー", romaji: "shawā", meaning: "Dush" },
+{ day: 23, word: "ボタン", romaji: "botan", meaning: "Tugma" },
+{ day: 23, word: "きょうとえき", romaji: "Kyōto-eki", meaning: "Kioto stantsiyasi" },
+{ day: 23, word: "しんじゅくえき", romaji: "Shinjuku-eki", meaning: "Shinjuku stantsiyasi" },
+{ day: 23, word: "うえのどうぶつえん", romaji: "Ueno dōbutsuen", meaning: "Ueno hayvonot bog'i" },
+{ day: 23, word: "しんばし", romaji: "Shinbashi", meaning: "Shinbashi" },
+{ day: 23, word: "ジェイアール", romaji: "Jeiāru", meaning: "J.R. (Yapon temir yo'l kompaniyasi)" },
+{ day: 23, word: "どうやって", romaji: "dōyatte", meaning: "Qanaqasiga, qanday qilib" },
             ],
             grammar: [
                 { day: 1, title: '〜たいです', formula: 'Fe\'l + たいです', explanation: 'Xohish-istakni bildiradi.', example_jp: '日本へ行きたいです。', example_reading: 'Nihon e ikitaidesu.', example_uz: 'Yaponiyaga borishni xohlayman.' },
@@ -1448,7 +1486,7 @@
         };
 
         let customWords = JSON.parse(localStorage.getItem('my_jp_custom_words') || '[]');
-        let selectedDays = Array.from({length: 22}, (_, i) => i + 1);
+        let selectedDays = Array.from({length: 23}, (_, i) => i + 1);
 
         let currentCategory = 'n5_kanji';
         let sortMode = 'sequential';
@@ -1490,7 +1528,7 @@
             const container = document.getElementById('days-checkbox-container');
             if (!container) return;
             container.innerHTML = '';
-            for (let i = 1; i <= 22; i++) {
+            for (let i = 1; i <= 23; i++) {
                 const label = document.createElement('label');
                 label.className = "flex items-center gap-2 p-1.5 rounded hover:bg-gray-800 cursor-pointer text-xs";
                 const isChecked = selectedDays.includes(i) ? 'checked' : '';
@@ -1507,7 +1545,7 @@
             const select = document.getElementById('custom-day-select');
             if (!select) return;
             select.innerHTML = '';
-            for (let i = 1; i <= 22; i++) {
+            for (let i = 1; i <= 23; i++) {
                 const opt = document.createElement('option');
                 opt.value = i;
                 opt.innerText = `${i}-kun`;
@@ -1541,7 +1579,7 @@
         }
 
         function selectAllDays() {
-            selectedDays = Array.from({length: 22}, (_, i) => i + 1);
+            selectedDays = Array.from({length: 23}, (_, i) => i + 1);
             document.querySelectorAll('#days-checkbox-container input').forEach(cb => cb.checked = true);
             updateSelectedDaysText();
             reshuffleData();
@@ -1555,14 +1593,14 @@
         }
 
         function toggleAllDays() {
-            if (selectedDays.length === 22) deselectAllDays();
+            if (selectedDays.length === 23) deselectAllDays();
             else selectAllDays();
         }
 
         function updateSelectedDaysText() {
             const txt = document.getElementById('selected-days-text');
             if (!txt) return;
-            if (selectedDays.length === 22) txt.innerText = "Barcha kunlar (1-22)";
+            if (selectedDays.length === 23) txt.innerText = "Barcha kunlar (1-23)";
             else if (selectedDays.length === 0) txt.innerText = "Hech qaysi kun tanlanmagan";
             else txt.innerText = `${selectedDays.length} ta kun tanlandi (${selectedDays.join(', ')})`;
         }
